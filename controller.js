@@ -27,9 +27,7 @@ const addForm = (req, res, next) => {
         const UI_schema_JSON = createUIschema(UI_file, data)//creates the UIschema
         const schema_JSON = createSchema(file, data)//creates the schema
 
-        file.save()
-
-        res.status(200).end("Form created successfully")
+        res.status(200).end(JSON.stringify(UI_schema_JSON))
     } catch (err) {
         res.status(404).send("a problem has occured with addForm action");
     }
@@ -57,41 +55,105 @@ const createUIschema = (UI_file, data) => {
         return
     } catch (error) {
         if (error)
-            console.log("problem in create UI schema:\n " + error)
+            console.error("problem in create UI schema:\n " + error)
     }
 }
 
 //creates the regular (not UI) schema
 const createSchema = (file,data) => {
     try {
-        
+        file.set("type","object")
+        file.set("properties",{})
+        for(const key in data)
+        {
+            if(key!="form_title")
+            {
+                const inner_section=data[key]
+                const temp_inner_JSON=checkForFields(inner_section)
+                //add to bigger JSON and what not
+            }
+        }
+        file.save()
+        return
     } catch (error) {
         if (error)
-            console.log("problem in create UI schema:\n " + error)
+            console.error("problem in create schema:\n " + error)
     }
 }
 
-//A method to build the JSON that will create the forms with JSONforms
-const buildInnerSections = (inner_key, inner_section, file) => {
-    switch (inner_key) {
-        case "field_name":
+
+const checkForFields=(inner_section)=>{
+    try {
+        for(const field in inner_section)
+        {
+            if(inner_section[field]=="string")//checks if the current inner section represents a string type attribute
             {
-                file.set(inner_key, {})
-                break;
+                console.log("it's a string")
+                const inner_string_JSON=checkStringFields(inner_section)
             }
-        case "field_type":
+            else if(inner_section[field]=="Number"||inner_section[field]=="Integer")//checks if the current inner section represents a number type attribute
             {
-
-
-
-                break
+                console.log("it's a num")
+                const inner_num_JSON=checkNumFields()
             }
-        case "values":
+            else{//if not number or string-should be boolean
+                //fill boolean logic
+            }
+        }
+    } catch (error) {
+        if(error)
+            console.error("error in checkForFields:\n"+error)
+    }
+}
+
+//takes the inner_section fields and returns a json
+const checkStringFields=(inner_section)=>{
+    try {
+        const fieldsArr=[]
+        
+        if("minLength" in inner_section)
+        {
+            fieldsArr.push('"minLength":'+inner_section.minLength)
+        }
+        if("maxLength" in inner_section)
+        {
+            fieldsArr.push('"maxLength":'+inner_section.maxLength)
+        }
+        if("description" in inner_section)
+        {
+            fieldsArr.push('"description":'+inner_section.description)
+        }
+        if("date" in inner_section)
+        {
+            fieldsArr.push('"date":'+inner_section.date)
+        }
+        if("values" in inner_section)
+        {
+            fieldsArr.push('"values":'+inner_section.values)
+        }
+        fieldsArr.push("}")
+        
+        let my_JSON="{"
+
+        for(let i=0;i<fieldsArr.length-1;i++)
+        {
+            if(fieldsArr[i]!=null)
             {
-                //should enter values
-                break
+                my_JSON+=fieldsArr[i]
             }
-
+            if(fieldsArr[i+1]!=null&&i!=fieldsArr.length-2)
+            {
+                my_JSON+=","
+            }
+        }
+        my_JSON+="}"
+        console.log("nigga:\n"+my_JSON)
+        my_JSON=JSON.parse(my_JSON)
+        
+        
+    } catch (error) {
+        if(error)
+        console.error("problem with checkStringFields:\n"+error)
     }
 }
 
@@ -114,3 +176,30 @@ module.exports = { addForm, getForm }
             }
         }
  */
+
+//A method to build the JSON that will create the forms with JSONforms
+        /**
+         * const buildInnerSections = (inner_key, inner_section, file) => {
+    switch (inner_key) {
+        case "field_name":
+            {
+                file.set(inner_key, {})
+                break;
+            }
+        case "field_type":
+            {
+
+
+
+                break
+            }
+        case "values":
+            {
+                //should enter values
+                break
+            }
+
+    }
+}
+
+         */
