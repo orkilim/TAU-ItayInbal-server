@@ -4,10 +4,12 @@
   "elements": [
     {
       "type": "control",
+      "scope": "#/properties/name",
       "label": "name"
     },
     {
       "type": "control",
+      "scope": "#/properties/age",
       "label": "age"
     }
   ]

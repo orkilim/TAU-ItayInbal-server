@@ -50,6 +50,7 @@ const createUIschema = (UI_file, data) => {
                 const inner_section = data[key]
                 const tempJSON = {
                     "type": "control",
+                    "scope":"#/properties/"+inner_section.field_name,
                     "label": inner_section.field_name
                 }
                 UI_file.append("elements", tempJSON)
