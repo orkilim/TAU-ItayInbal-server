@@ -1,0 +1,14 @@
+{
+  "type": "VerticalLayout",
+  "label": "Itay and Inbal's project",
+  "elements": [
+    {
+      "type": "control",
+      "label": "name"
+    },
+    {
+      "type": "control",
+      "label": "age"
+    }
+  ]
+}

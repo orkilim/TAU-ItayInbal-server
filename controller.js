@@ -27,16 +27,21 @@ const addForm = (req, res, next) => {
         const UI_schema_JSON = createUIschema(UI_file, data)//creates the UIschema
         const schema_JSON = createSchema(file, data)//creates the schema
 
-        res.status(200).end(JSON.stringify(UI_schema_JSON))
+        const two_JSONs={
+            "schema":schema_JSON,
+            "UI":UI_schema_JSON
+        }
+
+        res.status(200).end(JSON.stringify(two_JSONs))
     } catch (err) {
-        res.status(404).send("a problem has occured with addForm action");
+        res.status(404).send("a problem has occured with addForm action:\n"+err);
     }
 }
 
 //creates the UIschema
 const createUIschema = (UI_file, data) => {
     try {
-        UI_file.set("type", "group")
+        UI_file.set("type", "VerticalLayout")
         UI_file.set("label", data.form_title)
         UI_file.set("elements", [])
         //going through the JSON received in the request (data) and setting the fields
@@ -52,7 +57,7 @@ const createUIschema = (UI_file, data) => {
         }
 
         UI_file.save()
-        return
+        return UI_file.get()
     } catch (error) {
         if (error)
             console.error("problem in create UI schema:\n " + error)
@@ -73,7 +78,7 @@ const createSchema = (file, data) => {
             }
         }
         file.save()
-        return
+        return file.get()
     } catch (error) {
         if (error)
             console.error("problem in createSchema:\n " + error)
