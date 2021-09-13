@@ -42,16 +42,15 @@ const addForm = (req, res, next) => {
 const createUIschema = (UI_file, data) => {
     try {
         UI_file.set("type", "VerticalLayout")
-        UI_file.set("label", data.form_title)
         UI_file.set("elements", [])
         //going through the JSON received in the request (data) and setting the fields
         for (const key in data) {
             if (key != "form_title") {
                 const inner_section = data[key]
                 const tempJSON = {
-                    "type": "control",
+                    "type": "Control",
                     "scope":"#/properties/"+inner_section.field_name,
-                    "label": inner_section.field_name
+                    //"label": inner_section.field_name
                 }
                 UI_file.append("elements", tempJSON)
             }
