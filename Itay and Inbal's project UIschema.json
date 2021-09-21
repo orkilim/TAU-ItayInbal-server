@@ -3,14 +3,12 @@
   "label": "Itay and Inbal's project",
   "elements": [
     {
-      "type": "control",
-      "scope": "#/properties/name",
-      "label": "name"
+      "type": "Control",
+      "scope": "#/properties/name"
     },
     {
-      "type": "control",
-      "scope": "#/properties/age",
-      "label": "age"
+      "type": "Control",
+      "scope": "#/properties/age"
     }
   ]
 }

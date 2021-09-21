@@ -20,6 +20,7 @@ const getForm = (req, res, next) => {
 const addForm = (req, res, next) => {
     try {
         const data = req.body
+        console.log("this is the body received: "+JSON.stringify(data))
         //creating a JSON with the name requested
         let UI_file = editJsonFile(`${__dirname}/${data.form_title} UIschema.json`);
         let file = editJsonFile(`${__dirname}/${data.form_title} schema.json`);
@@ -91,18 +92,15 @@ const checkForFields = (inner_section) => {
         for (const field in inner_section) {
             if (inner_section["field_type"] == "string")//checks if the current inner section represents a string type attribute
             {
-                console.log("it's a string")
                 const inner_string_JSON = checkStringFields(inner_section)
                 return inner_string_JSON
             }
             else if (inner_section["field_type"] == "number" || inner_section[field] == "integer")//checks if the current inner section represents a number type attribute
             {
-                console.log("it's a num")
                 const inner_num_JSON = checkNumFields(inner_section)
                 return inner_num_JSON
             }
             else {//if not number or string-should be boolean
-                console.log("it's boolean")
                 const name = inner_section.field_name
                 const inner_bool_JSON = {
                     "type": "boolean"
@@ -202,44 +200,3 @@ module.exports = { addForm, getForm }
 
 
 
-/**
- * //making the new JSON with that title
-        file.set("form_title", data.form_title)
-
-        //going through the json to figure out the data types
-        for (let key in data) {
-            if (key != "form_title") {
-                const inner_section = data[key]
-                for (const inner_key in inner_section) {
-                    buildInnerSections(inner_key, inner_section, file)
-                }
-            }
-        }
- */
-
-//A method to build the JSON that will create the forms with JSONforms
-/**
- * const buildInnerSections = (inner_key, inner_section, file) => {
-switch (inner_key) {
-case "field_name":
-    {
-        file.set(inner_key, {})
-        break;
-    }
-case "field_type":
-    {
-
-
-
-        break
-    }
-case "values":
-    {
-        //should enter values
-        break
-    }
-
-}
-}
-
- */
