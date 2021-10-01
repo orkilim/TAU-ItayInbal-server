@@ -132,10 +132,10 @@ const checkStringFields = (inner_section) => {
         const fieldsArr = []
         if (inner_section.text_type == "Free-Text") {
             fieldsArr.push('"description":"' + inner_section.field_name+'"')
-            if (inner_section.min_val != -1) {
+            if (inner_section.min_val !="") {
                 fieldsArr.push(',"minLength":' + inner_section.min_val)
             }
-            if (inner_section.max_val != -1) {
+            if (inner_section.max_val != "") {
                 fieldsArr.push(',"maxLength":' + inner_section.max_val)
             }
         }
@@ -178,10 +178,10 @@ const checkNumFields = (inner_section) => {
         /*if ("description" in inner_section) {
             fieldsArr.push('"description":' + inner_section.description)
         }*/
-        if (inner_section.max_val != -1) {
+        if (inner_section.max_val != "") {
             fieldsArr.push('"maximum":' + inner_section.max_val)
         }
-        if (inner_section.min_val != -1) {
+        if (inner_section.min_val != "") {
             fieldsArr.push('"minimum":' + inner_section.min_val)
         }
         /*if ("default" in inner_section) {
