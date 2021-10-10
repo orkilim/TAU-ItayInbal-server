@@ -3,19 +3,143 @@
 //const {validationResult} = require("express-validator");
 //const date = require('date-and-time');
 const editJsonFile = require("edit-json-file");
+const fs = require('fs')
 
 //let file = editJsonFile(`${__dirname}/test.json`);
 
-const getForm = (req, res, next) => {
+const getForms = (req, res, next) => {
+    const amount = req.query.amountOfResearchers//the amount of names of researchers in the query
+    let namesArr = []
     try {
-        const form_title = req.query.title
-        let file = editJsonFile(`${__dirname}/${form_title}.json`);
-        const json_returned = JSON.stringify(file.get())
-        res.status(200).end(json_returned)
-    } catch (err) {
-        res.status(404).send("a problem has occured with getForm");
+        for (let i = 1; i <= req.query.length; i++) {
+            namesArr.push(req.query.name + i)
+        }
+        namesArr = namesArr.sort()
+        findFormsByName(namesArr, amount).then((data) => {
+            console.log("blah blah")
+            console.log("myForms is: ", data)
+            /*switch (data.myForms) {
+                case 0:
+                    {
+                        res.status(200).send(0)//there are no files with these names
+                        break;
+                    }
+                case 1:
+                    {
+                        res.status(200).send(-1)//UIschema or Schema files are missing in atleast one of the forms
+                        break;
+                    }
+            }*/
+
+            res.status(200).send(data)
+
+        })
+            .catch((error) => {
+                if (error)
+                    res.send("problem with promise in getForms: " + error)
+            })
+    } catch (error) {
+        if (error)
+            res.status(200).end("problem with getForms: " + error)
     }
 }
+
+const findFormsByName = (namesArr, amountOFnames) => {
+    return new Promise((resolve, reject) => {
+        let myForms = []
+        let missingSchemaFileArr = []
+        let missingUIschemaFileArr = []
+        try {
+            fs.readdir(`${__dirname}`, (err, myFiles) => {
+                if (err) {
+                    console.log("problem with readdir in getAllForms in findFormsByNames: " + err)
+                    return -3//problem with readdir
+                }
+                let stop = false; let startIndex = 0; let endIndex = 0;
+                while (!stop)//a loop to detemine where the form files start and where they end
+                {
+                    if (!(myFiles[startIndex].includes("formfile"))) {
+                        startIndex++
+                        endIndex++
+                    }
+                    else if (myFiles[endIndex].includes("formfile")) {
+                        endIndex++
+                    }
+                    else {
+                        stop = true
+                    }
+
+
+                }
+                endIndex--
+                console.log(startIndex, endIndex)
+                for (let i = startIndex; i <= endIndex; i += 2)//a loop to run through all the files we got
+                {
+                    let tempArrSchema = myFiles[i].split(" ")//the file name splited to separated words
+                    let tempArrUI = myFiles[i + 1].split(" ")
+                    if ((tempArrSchema[tempArrSchema.length - 2] == tempArrUI[tempArrUI.length - 2]) && (tempArrSchema[tempArrSchema.length - 1] == "Schema.json") && (tempArrUI[tempArrUI.length - 1] == "UIschema.json")) {
+
+                        //working on one array because they are completely similar besides the UIschema.json/Schema.json
+
+                        tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove the words UIschema.json or Schema.json
+                        tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove project's name
+
+                        tempArrSchema = tempArrSchema.sort()//an alphabetically sorted string array. at this point the tempArr contains only the names of the researchers
+                        let j = 0;
+                        let flag = true//flag to show if all the names are in current tempArr file name
+                        for (; j < amountOFnames && flag == true; j++) {
+                            if (!(tempArrSchema.includes(namesArr[j]))) {
+                                flag = false
+                            }
+                        }
+                        myForms.push(myFiles[i], myFiles[i + 1])
+                    }
+
+                    //TO ENABLE THE COMMENTS AFTER THIS LINE BECAUSE THEY CHECK IF THERE IS A FILE MISSING FOR A PROJECT!!!!!
+
+                    //#region Check if a file is missing
+
+                    /*else if(tempArrSchema[tempArrSchema.length - 2] != tempArrUI[tempArrUI.length - 2]){
+                        missingSchemaFileArr.push(myFiles[i])
+                        missingUIschemaFileArr.push(myFiles[i+1])
+                    }
+                    else if(tempArrSchema[tempArrSchema.length - 1] != "Schema.json"){//if one of the conditions didn't happen
+                        missingSchemaFileArr.push(myFiles[i]) //need to create a new Schema.json for that specific project name
+                    }
+                    else if(tempArrUI[tempArrUI.length - 1] == "UIschema.json")
+                    {
+                        missingUIschemaFileArr.push(myFiles[i+1]) //need to create a new UIschema for that specific project name
+                    }*/
+                    //#endregion
+
+                }
+
+                //console.log("myForms: ",myForms)
+
+                if (myForms.length == 0) {
+                    console.log("empty")
+                    resolve(0)//in case non with these names were found
+                }
+                else if (myForms.length % 2 == 1) {
+                    console.log("uneven amount of files means something is probably missing")
+                     resolve(-1)//in case there is a missing file of UIschema or Schema in one of the forms
+                }
+                else {//need to check if there is a UIschema and Schema JSONs for each form
+                    console.log("everything's cool")
+                    const myObj = {//everything's good
+                        myForms: myForms,
+                        missingUI: missingUIschemaFileArr,
+                        missingSchema: missingSchemaFileArr
+                    }
+                    resolve(myObj)
+                }
+            })
+        } catch (err) {
+            res.status(404).send("a problem has occured with findFormsByName: " + err);
+        }
+    })
+}
+
 
 const addForm = (req, res, next) => {
     try {
@@ -38,6 +162,7 @@ const addForm = (req, res, next) => {
         res.status(404).send("a problem has occured with addForm action:\n" + err);
     }
 }
+//#region Add form
 
 //creates the UIschema
 const createUIschema = (UI_file, data) => {
@@ -131,24 +256,23 @@ const checkStringFields = (inner_section) => {
     try {
         const fieldsArr = []
         if (inner_section.text_type == "Free-Text") {
-            fieldsArr.push('"description":"' + inner_section.field_name+'"')
-            if (inner_section.min_val !="") {
+            fieldsArr.push('"description":"' + inner_section.field_name + '"')
+            if (inner_section.min_val != "") {
                 fieldsArr.push(',"minLength":' + inner_section.min_val)
             }
             if (inner_section.max_val != "") {
                 fieldsArr.push(',"maxLength":' + inner_section.max_val)
             }
         }
-        if (inner_section.text_type=="Date") {
+        if (inner_section.text_type == "Date") {
             fieldsArr.push('"format":"date"')
         }
-        if (inner_section.text_type=="Choice Menu (Dropdown)") {
-            let values_for_dropdown_menu_array=[]
-            for(let i=0;i<inner_section.dropdown_fields_values.length;i++)
-            {
-                values_for_dropdown_menu_array.push('"'+(inner_section.dropdown_fields_values[i]).value_name+'"')
+        if (inner_section.text_type == "Choice Menu (Dropdown)") {
+            let values_for_dropdown_menu_array = []
+            for (let i = 0; i < inner_section.dropdown_fields_values.length; i++) {
+                values_for_dropdown_menu_array.push('"' + (inner_section.dropdown_fields_values[i]).value_name + '"')
             }
-            fieldsArr.push('"enum":[' + values_for_dropdown_menu_array+"]")
+            fieldsArr.push('"enum":[' + values_for_dropdown_menu_array + "]")
         }
         fieldsArr.push("}")
         let my_JSON = '{"type":"string",'//the string that will later become the JSON we send back
@@ -211,8 +335,8 @@ const checkNumFields = (inner_section) => {
 
 //#endregion
 
-
-module.exports = { addForm, getForm }
+//#endregion
+module.exports = { addForm, getForms }
 
 
 

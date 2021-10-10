@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router()
 const controller = require('./controller');
 
-router.get('/getForm', controller.getForm);
+router.get('/getForms', controller.getForms);
 router.post('/addForm', controller.addForm);
 //router.put('/editForm', controller.editForm);
 
