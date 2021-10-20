@@ -5,7 +5,7 @@ const controller1=require('./controller1')
 
 router.get('/getForms', controller.getForms);
 router.post('/createForm', controller1.createForm);
-
+router.post('/handleData',controller1.handleData)
 //router.get('/getForms', controller1.getForms);
 
 //router.put('/editForm', controller.editForm);
