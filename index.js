@@ -6,6 +6,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 app.use(cors());
 
+require('./db')
+
 app.use('/', express.static('./public'));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
