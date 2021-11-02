@@ -4,49 +4,59 @@
 //const date = require('date-and-time');
 //const editJsonFile = require("edit-json-file");
 const fs = require('fs');
-const Config=require('./models/configuration')
+const Config = require('./models/configuration')
 const mongoose = require('mongoose');
 //let file = editJsonFile(`${__dirname}/test.json`);
 const MongoClient = require('mongodb').MongoClient;
 
+const url = process.env.DB_URL
 
 const createForm = async (req, res, next) => {
-    
-    const schema=req.body.schema
-    const ui=req.body.ui
-    const name=req.body.name
-    const nameForLink=name.replace(/ /g,"_")
-    console.log("this will go to link: ",nameForLink)
+
+    const schema = req.body.schema
+    const ui = req.body.ui
+    const name = req.body.name
+    const nameForLink = name.replace(/ /g, "_")
+    MongoClient.connect(url, (err, db) => {
+        if (err)
+            res.status(500).send("err in MongoClient.connect is: ", err);
+        const dbo = db.db("formcreator");
+        dbo.createCollection(`${name}`, function (err, res) {
+            if (err)
+                res.status(501).send("err in dbo.createCollection is: ", err);
+            console.log("Collection created!");
+            db.close();
+        });
+    })
+    console.log("this will go to link: ", nameForLink)
     try {
 
-        const link=`http://localhost:3000/form/${nameForLink}`
+        const link = `http://localhost:3000/form/${nameForLink}`
 
-        const config=new Config({name,schema,ui,link})
-        const result=await Config.findOne({name:name})
-        if(result)
-        {
+        const config = new Config({ name, schema, ui, link })
+        const result = await Config.findOne({ name: name })
+        if (result) {
             res.status(501).send("a form with that name already exists")
         }
-        const didSave=await config.save()
-        if(didSave)
-        {
-            const myObj={
-                msg:"new configuration for form created successfully",
-                link:link
+        const didSave = await config.save()
+        if (didSave) {
+            const myObj = {
+                msg: "new configuration for form created successfully",
+                link: link
             }
             res.status(200).send(JSON.stringify(myObj))
         }
 
     } catch (error) {
-        if(error){
-            console.log("error in createForm is: ",error)
-            res.status(500).send("error in createForm is: ",error)
+        if (error) {
+            console.log("error in createForm is: ", error)
+            res.status(500).send("error in createForm is: ", error)
         }
     }
 
 }
 
-const handleData = (req, res) => {
+/*const handleData = (req, res) => {
     console.log(req.query.saveIn)
     console.log(typeof req.query.saveIn)
     console.log("this is the received data from handleData: ", req.body)
@@ -59,51 +69,49 @@ const handleData = (req, res) => {
         }
     })
 
-}
+}*/
 
 const getForm = (req, res, next) => {
 
-    const path="C:/Users/Or/Desktop/TAU- work/Itay and Inbal's project/JSONs"
-    const title=req.query.title
-    let JSONsArr=[]
+    const path = "C:/Users/Or/Desktop/TAU- work/Itay and Inbal's project/JSONs"
+    const title = req.query.title
+    let JSONsArr = []
     try {
-        fs.readdir(path, (err,files) => {
+        fs.readdir(path, (err, files) => {
             if (err) {
                 console.log("error in getForms is: ", err)
                 res.status(500).send("error in getForm in readdir is: ", err)
             }
             //console.log("files: "+files)
-            for(let i=0;i<files.length;i++)
-            {
-                const tempArr=files[i].split(" ")
-                if(tempArr[0]==title)
-                {
+            for (let i = 0; i < files.length; i++) {
+                const tempArr = files[i].split(" ")
+                if (tempArr[0] == title) {
                     JSONsArr.push(files[i])
                 }
             }
             //console.log("JSONsArr is:",JSONsArr)
 
-            let myObj={
-                schema:"",
-                UI:""
+            let myObj = {
+                schema: "",
+                UI: "",
+                nameOfCollection: title.replace(/_/g, " ")
             }
+            console.log("this is the name of the collection that the answers will be saved in: ", myObj.nameOfCollection)
             //const path="C:/Users/Or/Desktop/TAU- work/Itay and Inbal's project/JSONs"
-            fs.readFile(path+"/"+JSONsArr[0],(err,data)=>{
-                if(err)
-                {
-                    res.status(501).send("problem with readfile for schema in getForm is: ",err)
+            fs.readFile(path + "/" + JSONsArr[0], (err, data) => {
+                if (err) {
+                    res.status(501).send("problem with readfile for schema in getForm is: ", err)
                 }
-                myObj.schema=JSON.parse(data)
+                myObj.schema = JSON.parse(data)
 
-                fs.readFile(path+"/"+JSONsArr[1],(err,data)=>{
-                    if(err)
-                    {
-                        res.status(502).send("problem with readfile for UI in getForm is: ",err)
+                fs.readFile(path + "/" + JSONsArr[1], (err, data) => {
+                    if (err) {
+                        res.status(502).send("problem with readfile for UI in getForm is: ", err)
                     }
-                    myObj.UI=JSON.parse(data)
+                    myObj.UI = JSON.parse(data)
                     res.status(200).send(myObj)
                 })
-                
+
 
             })
         })
@@ -115,61 +123,79 @@ const getForm = (req, res, next) => {
     }
 }
 
-const getJSONS=(req,res)=>{
-    const title=req.query.title
-    const path="C:/Users/Or/Desktop/TAU- work/Itay and Inbal's project/JSONs"
+/*const getJSONS = (req, res) => {
+    const title = req.query.title
+    const path = "C:/Users/Or/Desktop/TAU- work/Itay and Inbal's project/JSONs"
     try {
-        fs.readdir(path, (err,files) => {
+        fs.readdir(path, (err, files) => {
             if (err) {
                 console.log("error in getJSONS is: ", err)
                 res.status(500).send("error in getJSONS in readdir is: ", err)
             }
-            console.log("files: "+files)
-            let myObj={
-                schema:"",
-                UI:""
+            console.log("files: " + files)
+            let myObj = {
+                schema: "",
+                UI: ""
             }
-            let i=0
-            for(;i<files.length;i++)
-            {
-                if(title==files[i])
-                {
+            let i = 0
+            for (; i < files.length; i++) {
+                if (title == files[i]) {
                     break;
                 }
             }
-            console.log("title is: "+title)
-            console.log("path for readfile is: "+path+"/"+files[i])
-            fs.readFile(path+"/"+files[i],(err,data)=>{
-                if(err)
-                {
-                    res.status(500).send("problem with readfile for schema in getJSONS is: ",err)
+            console.log("title is: " + title)
+            console.log("path for readfile is: " + path + "/" + files[i])
+            fs.readFile(path + "/" + files[i], (err, data) => {
+                if (err) {
+                    res.status(500).send("problem with readfile for schema in getJSONS is: ", err)
                 }
-                myObj.schema=JSON.parse(data)
+                myObj.schema = JSON.parse(data)
 
-                fs.readFile(path+"/"+files[i+1],(err,data)=>{
-                    if(err)
-                    {
-                        res.status(500).send("problem with readfile for UI in getJSONS is: ",err)
+                fs.readFile(path + "/" + files[i + 1], (err, data) => {
+                    if (err) {
+                        res.status(500).send("problem with readfile for UI in getJSONS is: ", err)
                     }
-                    myObj.UI=JSON.parse(data)
+                    myObj.UI = JSON.parse(data)
                     res.status(200).send(myObj)
                 })
-                
-                
+
+
 
 
             })
-            
+
         })
     } catch (error) {
-        if(error){
-            res.status(500).send("problem with getJSONS is: ",error)
+        if (error) {
+            res.status(500).send("problem with getJSONS is: ", error)
         }
     }
+}*/
+
+const saveAnswers = (req, res) => {
+    const nameOfCollection = req.body.nameOfCollection
+    console.log("this is the collection: ", nameOfCollection)
+
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log("error in MongoClient.connect in saveAnswers is: ", err)
+            res.status(500).send("error in MongoClient.connect in saveAnswers is: ", err)
+        }
+        var dbo = db.db("formcreator");
+        var myobj = { answers: req.body.answers };
+        dbo.collection(`${nameOfCollection}`).insertOne(myobj, function (err, response) {
+            if (err) {
+                console.log("error in dbo.collection or in insertOne in saveAnswers is: ", err)
+                res.status(501).send("error in dbo.collection or in insertOne in saveAnswers is: ", err)
+            }
+            console.log("document saved");
+            res.status(200).send("answers saved successfully")
+            db.close();
+        });
+    });
+
 }
-
-
-module.exports = { createForm, handleData,getForm,getJSONS }
+module.exports = { createForm, /*handleData,*/ getForm, /*getJSONS,*/ saveAnswers }
 
 
 //OLD createForm
