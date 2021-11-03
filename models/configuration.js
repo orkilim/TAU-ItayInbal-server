@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const schema = {
     name: { type: String, required: true },
     schema: {type:Object, required: true},
-    ui: {type:Object, required: true },
+    //ui: {type:Object, required: true },
     link: { type: String,required:true },
 }
 
