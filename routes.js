@@ -6,6 +6,7 @@ const controller1=require('./controller1')
 router.post('/createForm', controller1.createForm);
 router.get('/getForm', controller1.getForm);
 router.post('/saveAnswers', controller1.saveAnswers);
+router.get('/getAnswers', controller1.getAnswers);
 
 //router.get('/getForms', controller.getForms);
 //router.post('/handleData',controller1.handleData)

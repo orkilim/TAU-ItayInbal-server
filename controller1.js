@@ -17,27 +17,30 @@ const createForm = async (req, res, next) => {
     //const ui = req.body.ui was removed for now
     const name = req.body.name
     const nameForLink = name.replace(/ /g, "_")
-    MongoClient.connect(url, (err, db) => {
-        if (err)
-            return res.status(500).send("err in MongoClient.connect is: ", err);
-        const dbo = db.db("formcreator");
-        dbo.createCollection(`${name}`, function (err, res) {
-            if (err)
-                return res.status(501).send("err in dbo.createCollection is: ", err);
-            console.log("Collection created!");
-            db.close();
-        });
-    })
     console.log("this will go to link: ", nameForLink)
     try {
 
         const link = `http://localhost:3000/form/${nameForLink}`
 
-        const config = new Config({ name, schema,  link })//ui attribute taken off the Config creation object
+        const config = new Config({ name, schema, link })//ui attribute taken off the Config creation object
         const result = await Config.findOne({ name: name })
         if (result) {
             return res.status(501).send("a form with that name already exists")
         }
+
+        MongoClient.connect(url, (err, db) => {
+            if (err)
+                return res.status(500).send("err in MongoClient.connect is: ", err);
+            const dbo = db.db("formcreator");
+            dbo.createCollection(`${name}`, function (err, res) {
+                if (err)
+                    return res.status(501).send("err in dbo.createCollection is: ", err);
+                console.log("Collection created!");
+                db.close();
+            });
+        })
+        
+
         const didSave = await config.save()
         if (didSave) {
             const myObj = {
@@ -63,13 +66,13 @@ const getForm = (req, res, next) => {
     const title = req.query.title
     let JSONsArr = []
     try {
-        
-        Config.findOne({name:title.replace(/_/g, " ")}, (err,data) => {
+
+        Config.findOne({ name: title.replace(/_/g, " ") }, (err, data) => {
             if (err) {
                 console.log("error in getForms is: ", err)
                 return res.status(500).send("error in getForm in readdir is: ", err)
             }
-            
+
 
             console.log(data)
 
@@ -80,18 +83,13 @@ const getForm = (req, res, next) => {
             }
 
             return res.status(200).send(myObj)
-            
-                if (err) {
-                    return res.status(501).send("problem with readfile for schema in getForm is: ", err)
-                }
-                myObj.schema = JSON.parse(data)*/
 
-                
-
-                
+            /*if (err) {
+                return res.status(501).send("problem with readfile for schema in getForm is: ", err)
+            }
+            myObj.schema = JSON.parse(data)*/
 
 
-           
         })
     } catch (error) {
         if (error) {
@@ -103,7 +101,7 @@ const getForm = (req, res, next) => {
 
 
 const saveAnswers = (req, res) => {
-    const nameOfCollection = req.body.nameOfCollection
+    const nameOfCollection = req.body.name
     console.log("this is the collection: ", nameOfCollection)
 
     MongoClient.connect(url, function (err, db) {
@@ -125,7 +123,38 @@ const saveAnswers = (req, res) => {
     });
 
 }
-module.exports = { createForm, /*handleData,*/ getForm, /*getJSONS,*/ saveAnswers }
+
+const getAnswers = (req, res) => {
+    const nameOfCollection = req.query.name
+    try {
+
+        MongoClient.connect(url, function (err, db) {
+            if (err) {
+                console.log("error in MongoClient.connect in getAnswers is: ", err)
+                return res.status(500).send("error in MongoClient.connect in getAnswers is: ", err)
+            }
+            var dbo = db.db("formcreator");
+            
+            dbo.collection(`${nameOfCollection}`).find({}).toArray(function (err, result) {
+                if (err){ 
+                    console.log("err in dbo.collectio.find in getAnswers is: ",err)
+                    return res.status(502).send("err in dbo.collectio.find in getAnswers is: ",err)
+                }
+                console.log(result);
+                db.close();
+                
+                return res.status(200).send(result)
+            });
+        });
+    } catch (error) {
+        if (error) {
+            console.log("error in getAnswers is: ", error)
+            res.status(501).send("error in getAnswers is: ", error)
+        }
+    }
+}
+
+module.exports = { createForm, getForm, saveAnswers, getAnswers/*handleData,*/ /*getJSONS,*/ }
 
 
 //OLD createForm
