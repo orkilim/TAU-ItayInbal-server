@@ -3,10 +3,10 @@ const router = express.Router()
 const controller = require('./controller');
 const controller1=require('./controller1')
 
-router.post('/createForm', controller1.createForm);
-router.get('/getForm', controller1.getForm);
-router.post('/saveAnswers', controller1.saveAnswers);
-router.get('/getAnswers', controller1.getAnswers);
+router.post('/create-form', controller1.createForm);
+router.get('/get-form', controller1.getForm);
+router.post('/save-answers', controller1.saveAnswers);
+router.get('/get-answers', controller1.getAnswers);
 
 //router.get('/getForms', controller.getForms);
 //router.post('/handleData',controller1.handleData)
