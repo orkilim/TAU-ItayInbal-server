@@ -14,38 +14,37 @@ const url = process.env.DB_URL
 const createForm = async (req, res, next) => {
 
     const schema = req.body.schema
-    //const ui = req.body.ui was removed for now
+    const ui = req.body.ui
     const name = req.body.name
+    if(name==null||schema==null)
+    {
+        console.log("name or schema are null")
+        return res.status(500).send("name or schema are null")
+    }
     const nameForLink = name.replace(/ /g, "-")
     console.log("this will go to link: ", nameForLink)
     try {
 
-        const link = `http://localhost:3000/form/${nameForLink}`
+        const link = `http://localhost:3000/forms/${nameForLink}`
 
-        const config = new Config({ name, schema, link })//ui attribute taken off the Config creation object
+        const config = new Config({ name, schema,ui, link })//ui attribute taken off the Config creation object
         const result = await Config.findOne({ name: name })
         if (result) {
             return res.status(201).send("a form with that name already exists")
         }
 
         MongoClient.connect(url, (err, db) => {
-            if (err)
-                return res.status(500).send("err in MongoClient.connect is: ", err);
+            if (err){
+                db.close()
+                return res.status(501).send("err in MongoClient.connect is: ", err);
+            }
             const dbo = db.db("formcreator");
             dbo.createCollection(`${name}`, function (err, res) {
                 if (err)
-                    return res.status(501).send("err in dbo.createCollection is: ", err);
+                    return res.status(502).send("err in dbo.createCollection is: ", err);
                 console.log("Collection created!");
                 db.close();
             });
-        })
-
-        fs.mkdir(`../Results/${name}`, (err) => {
-            if (err) {
-                console.log("a problem occured in creating a folder to save the answer for that research: ", err)
-                return res.status(500).send("a problem occured in creating a folder to save the answer for that research: ", err)
-            }
-            console.log("folder created successfully")
         })
 
 
@@ -58,11 +57,17 @@ const createForm = async (req, res, next) => {
             }
             res.status(200).json(myObj)
         }
+        else{
+            const myObj = {
+                msg: "problem with saving the configuration"
+            }
+            return res.status(503).send("problem with saving the configuration")
+        }
 
     } catch (error) {
         if (error) {
             console.log("error in createForm is: ", error)
-            res.status(500).send("error in createForm is: ", error)
+            res.status(504).send("error in createForm is: ", error)
         }
     }
 
@@ -82,12 +87,12 @@ const getForm = (req, res, next) => {
                 return res.status(500).send("error in getForm in readdir is: ", err)
             }
 
-
-            console.log(data)
+            console.log(title.replace(/-/g, " "))
+            console.log("data is: ",data)
 
             let myObj = {
                 schema: data.schema,
-                //UI: "",
+                UI: data.ui,
                 nameOfCollection: title.replace(/-/g, " ")
             }
 
@@ -110,7 +115,7 @@ const saveAnswers = (req, res) => {
     console.log("this is the collection: ", nameOfCollection)
 
     const date = new Date()
-    const dateStr = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`
+    const dateStr = `${date.getDate()}-${(date.getMonth())+1}-${date.getFullYear()},${date.getHours()}:${date.getMinutes()}`
     const myobj = {
         answers: req.body.answers,
         date: dateStr
@@ -119,6 +124,7 @@ const saveAnswers = (req, res) => {
     MongoClient.connect(url, function (err, db) {
         if (err) {
             console.log("error in MongoClient.connect in saveAnswers is: ", err)
+            db.close()
             return res.status(500).send("error in MongoClient.connect in saveAnswers is: ", err)
         }
         const dbo = db.db("formcreator");
@@ -126,6 +132,7 @@ const saveAnswers = (req, res) => {
         dbo.collection(`${nameOfCollection}`).insertOne(myobj, function (err, response) {
             if (err) {
                 console.log("error in dbo.collection or in insertOne in saveAnswers is: ", err)
+                db.close()
                 return res.status(501).send("error in dbo.collection or in insertOne in saveAnswers is: ", err)
             }
             console.log("document saved");
@@ -133,15 +140,9 @@ const saveAnswers = (req, res) => {
         });
     });
     
-        fs.writeFile(`../Results/${nameOfCollection}/${dateStr}.json`,JSON.stringify(req.body.answers) ,(err,result) => {
-            if (err) {
-                console.log("problem with writing new result is: ", err)
-                return res.status(502).send("problem with writing new result is: ", err)
-            }
-            return res.status(200).send("answers saved successfully")
-        })
+        
     
-
+        return res.status(200).send("answers saved successfully")
 
 }
 
@@ -152,6 +153,7 @@ const getAnswers = (req, res) => {
         MongoClient.connect(url, function (err, db) {
             if (err) {
                 console.log("error in MongoClient.connect in getAnswers is: ", err)
+                db.close()
                 return res.status(500).send("error in MongoClient.connect in getAnswers is: ", err)
             }
             var dbo = db.db("formcreator");
