@@ -122,6 +122,7 @@ const saveAnswers = (req, res) => {
     };
 
     MongoClient.connect(url, function (err, db) {
+        
         if (err) {
             console.log("error in MongoClient.connect in saveAnswers is: ", err)
             db.close()
