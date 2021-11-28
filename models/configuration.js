@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-//const Guard = require('./guard')
-//mongoose.set('useFindAndModify', false);
 
+//creating the schema that will determine what goes to each Configuration object in the Configuration colection
 const schema = {
     name: { type: String, required: true },
     schema: {type:Object, required: true},
