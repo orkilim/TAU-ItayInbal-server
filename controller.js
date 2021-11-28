@@ -1,126 +1,77 @@
-//const jwt = require('jsonwebtoken');
-//const bcrypt = require('bcryptjs');
-//const {validationResult} = require("express-validator");
-//const date = require('date-and-time');
-const editJsonFile = require("edit-json-file");
-const fs = require('fs')
+const fs = require('fs');
+const Config = require('./models/configuration')
+const mongoose = require('mongoose');
+const {url,host,path}=require('./consts')
+/**
+ * connection to MongoDB through the MongoClient- done for specific action not available directly through 
+ * the Mongoose npm, such as adding a new collection 
+ */
+const MongoClient = require('mongodb').MongoClient;
 
-//let file = editJsonFile(`${__dirname}/test.json`);
 
-const getForms = (req, res, next) => {
-    const amount = req.query.amountOfResearchers//the amount of names of researchers in the query
-    if (amount == 0) {
-        findFormsByName(null, 0)
 
-    }
-    let namesArr = []
-    try {
-        for (let i = 1; i <= amount; i++) {
-            const nameStr = "name" + i
-            namesArr.push(req.query[nameStr])
-        }
-        console.log("namesArr is: " + namesArr)
-        namesArr = namesArr.sort()
-        findFormsByName(namesArr, amount).then((data) => {
-            console.log("blah blah")
-            console.log("myForms is: ", data)
-            switch (data) {
-                case 0:
-                    {
-                        res.status(200).send(0)//there are no files with these names
-                        break;
-                    }
-                case 1:
-                    {
-                        res.status(200).send(-1)//UIschema or Schema files are missing in atleast one of the forms
-                        break;
-                    }
-            }
+const createForm = async (req, res, next) => {
 
-            res.status(200).send(data.myForms)
-
-        })
-            .catch((error) => {
-                if (error)
-                    res.send("problem with promise in getForms: " + error)
-            })
-    } catch (error) {
-        if (error)
-            res.status(200).end("problem with getForms: " + error)
-    }
-}
-
-const findFormsByName = (namesArr, amountOFnames) => {
-    //GENERAL SEARCH FOR ALL FORMS
-    if (namesArr == null && amountOFnames == 0)//retrieve ALL projects
+    const schema = req.body.schema
+    const ui = req.body.ui
+    const name = req.body.name
+    if(name==null||schema==null)
     {
-        console.log("i am in 1")
-        return new Promise((resolve, reject) => {
-            let myForms = []
-            let missingSchemaFileArr = []
-            let missingUIschemaFileArr = []
-            try {
-                fs.readdir(`${__dirname}`, (err, myFiles) => {
-                    if (err) {
-                        console.log("problem with readdir in getForms in findFormsByNames: " + err)
-                        return -3//problem with readdir
-                    }
-                    let stop = false; let startIndex = 0; let endIndex = 0;
-                    while (!stop)//a loop to detemine where the form files start and where they end
-                    {
-                        if (!(myFiles[startIndex].includes("formfile"))) {
-                            startIndex++
-                            endIndex++
-                        }
-                        else if (myFiles[endIndex].includes("formfile")) {
-                            endIndex++
-                        }
-                        else {
-                            stop = true
-                        }
+        console.log("name or schema are null")
+        return res.status(500).send("name or schema are null")
+    }
+    //create a string for the link in the format of: http://localhost:3000/forms/name-of-research
+    const nameForLink = name.replace(/ /g, "-")
+    console.log("this will go to link: ", nameForLink)
+    try {
+        
+        const link = `http://${host}/forms/${nameForLink}`
 
+        //creating a configuration for form to go to Configurations collection in MongoDB
+        const config = new Config({ name, schema,ui, link })
+        const result = await Config.findOne({ name: name })
+        if (result) {
+            return res.status(201).send("a form with that name already exists")
+        }
+        //creating a connection to create a new collection that will have the name of the research/experiment
+        MongoClient.connect(url, (err, db) => {
+            if (err){
+                db.close()
+                return res.status(501).send("err in MongoClient.connect is: ", err);
+            }
+            const dbo = db.db("formcreator");
+            dbo.createCollection(`${name}`, function (err, res) {
+                if (err)
+                    return res.status(502).send("err in dbo.createCollection is: ", err);
+                console.log("Collection created!");
+                db.close();
+            });
+        })
 
-                    }
-                    endIndex--
-                    console.log(startIndex, endIndex)
-                    for (let i = startIndex; i <= endIndex; i += 2)//a loop to run through all the files we got
-                    {
-                        let tempArrSchema = myFiles[i].split(" ")//the file name splited to separated words
-                        let tempArrUI = myFiles[i + 1].split(" ")
-                        if ((tempArrSchema[tempArrSchema.length - 2] == tempArrUI[tempArrUI.length - 2]) && (tempArrSchema[tempArrSchema.length - 1] == "Schema.json") && (tempArrUI[tempArrUI.length - 1] == "UIschema.json")) {
+        //saving the configutarion to Configurations collection
+        const didSave = await config.save()
+        if (didSave) {
+            const myObj = {
+                msg: "new configuration for form created successfully",
+                link: link
+            }
+            res.status(200).json(myObj)
+        }
+        else{
+            const myObj = {
+                msg: "problem with saving the configuration"
+            }
+            return res.status(503).send("problem with saving the configuration")
+        }
 
-                            //working on one array because they are completely similar besides the UIschema.json/Schema.json
+    } catch (error) {
+        if (error) {
+            console.log("error in createForm is: ", error)
+            res.status(504).send("error in createForm is: ", error)
+        }
+    }
 
-                            tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove the words UIschema.json or Schema.json
-                            tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove project's name
-
-
-                            myForms.push(myFiles[i], myFiles[i + 1])
-                        }
-
-                        //TO ENABLE THE COMMENTS AFTER THIS LINE BECAUSE THEY CHECK IF THERE IS A FILE MISSING FOR A PROJECT!!!!!
-
-                        //#region Check if a file is missing
-
-                        /*else if(tempArrSchema[tempArrSchema.length - 2] != tempArrUI[tempArrUI.length - 2]){
-                            missingSchemaFileArr.push(myFiles[i])
-                            missingUIschemaFileArr.push(myFiles[i+1])
-                        }
-                        else if(tempArrSchema[tempArrSchema.length - 1] != "Schema.json"){//if one of the conditions didn't happen
-                            missingSchemaFileArr.push(myFiles[i]) //need to create a new Schema.json for that specific project name
-                        }
-                        else if(tempArrUI[tempArrUI.length - 1] == "UIschema.json")
-                        {
-                            missingUIschemaFileArr.push(myFiles[i+1]) //need to create a new UIschema for that specific project name
-                        }*/
-                        //#endregion
-
-                    }
-
-                    //console.log("myForms: ",myForms)
-
-
-                })
+}
 
 
                 if (myForms.length == 0) {
