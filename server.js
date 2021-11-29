@@ -6,9 +6,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 app.use(cors());
 
+//connection to MongoDB 
 require('./db')
 
+//middlewares 
 app.use('/', express.static('./public'));
+
+//CORS handling
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
@@ -24,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
     
 const controller = require("./routes");
 
+//adding a router as a middleware
 app.use("/route", controller);
 
 app.use(bodyParser.json());

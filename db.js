@@ -13,3 +13,11 @@ mongoose.connect(url, options);
 const connection = mongoose.connection;
 connection.on('error', err => console.error('connection error: ', err)); //error handling
 connection.once('open', () => console.log('connected to: ', connection.name)) //connection handling
+
+console.log("process.env.NODE_ENV: ",process.env.NODE_ENV)
+
+if (process.env.NODE_ENV === 'test') {
+    mongoose.connection.close(function () {
+      console.log('Mongoose connection disconnected');
+    });
+  }
