@@ -5,11 +5,9 @@ server side for formcreator system
 these are the instructions, settings and everything needed to use the formcreator system successfully.
 
 _____SETTING:_____
-IDE: Visual Studio Code
 package manager: npm
-developing OS: windows 10
-server-side enviroment: Node.js (to be installed on the developer's machine)
-front-end library/framework: React.js (to be installed on the developer's machine)
+server-side enviroment: Node.js 
+front-end library/framework: React.js 
 previous developer: Or Kilim, for questions and inqueries contact me on orkilim@gmail.com
 
 Details for Package.json:
