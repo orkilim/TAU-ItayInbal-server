@@ -93,10 +93,6 @@ Details for Package.json:
   
   this call saves a the set of answers a specific user inputed to the specific collection (specified as "name" in the body of the call) in the database, the answer gets metadata of time and date added to it
   
-  
  
-  _____CREDENTIALS TO MongoDB ACCOUNT:_____
-  
-  the credentials can be obtained from Or Kilim (orkilim@gmail.com) or (if changed) from Inbal Zelig (inbaladir@gmail.com)
   
   
