@@ -13,3 +13,8 @@ mongoose.connect(url, options);
 const connection = mongoose.connection;
 connection.on('error', err => console.error('connection error: ', err)); //error handling
 connection.once('open', () => console.log('connected to: ', connection.name)) //connection handling
+
+
+/*if (process.env.NODE_ENV === 'test') {
+    mongoose.connection.close();
+  }*/

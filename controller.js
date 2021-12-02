@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Config = require('./models/configuration')
 const mongoose = require('mongoose');
-const {url,host,path}=require('./consts')
+const { url, host, path } = require('./consts')
 /**
  * connection to MongoDB through the MongoClient- done for specific action not available directly through 
  * the Mongoose npm, such as adding a new collection 
@@ -9,41 +9,75 @@ const {url,host,path}=require('./consts')
 const MongoClient = require('mongodb').MongoClient;
 
 
-
+/**
+ * a function that saves configurations sent by the researcher in the DB:
+ * gets:
+ * 
+ * the function receives inside the body of "req" variable (req.body) the following:
+ * -schema: Object, required. the schema of the form, that defines which fields will be in the form.
+ * 
+ * -ui: Object, optional. the ui configuration of the schema, that defines how the schema will look like in terms of limitations and tools (checkboxes, radiobuttons, number of rows for a specific input
+ * a limit of min and max to some inputs and more)
+ * 
+ * -name: String, required. the name of the form/research, the name which will than become the name of the collection in the formcreator database 
+ * which under all the answers from the participants will be saved. 
+ * 
+ * 
+ * returns: 
+ * 
+ * upon SUCCESSFUL execution: status 200 and a url (link) to send to participants which will return the form the researcher
+ * configured and that can actually save answers to the specified collection (specified collection=name of research/form in the form creator database)
+ * 
+ * the link/url is a string
+ * 
+ * possible error/other status codes: 
+ * 
+ * 201: NOT an error- a collection (research/form) already exists with the chosen name (req.body.name)
+ * 
+ * 500: name or schema were NOT received in req.body i.e in the request to the server
+ * 
+ * 501: could not connect to the mongoDB and the formcreator database via MongoClient. reason specified in err variable
+ * 
+ * 502: could not create a collection with MongoClient. reason specified in err variable
+ * 
+ * 503: could not save form configuration to formcreator database OR save was not successful.
+ * 
+ * 504: a general error. reason specified in error variable
+ */
 const createForm = async (req, res, next) => {
+
 
     const schema = req.body.schema
     const ui = req.body.ui
     const name = req.body.name
-    if(name==null||schema==null)
-    {
+    if (name == null || schema == null) {
         console.log("name or schema are null")
         return res.status(500).send("name or schema are null")
     }
     //create a string for the link in the format of: http://localhost:3000/forms/name-of-research
     const nameForLink = name.replace(/ /g, "-")
-    console.log("this will go to link: ", nameForLink)
+
     try {
-        
+
         const link = `http://${host}/forms/${nameForLink}`
 
         //creating a configuration for form to go to Configurations collection in MongoDB
-        const config = new Config({ name, schema,ui, link })
+        const config = new Config({ name, schema, ui, link })
         const result = await Config.findOne({ name: name })
         if (result) {
             return res.status(201).send("a form with that name already exists")
         }
         //creating a connection to create a new collection that will have the name of the research/experiment
         MongoClient.connect(url, (err, db) => {
-            if (err){
+            if (err) {
+                console.log("can't connect")
                 db.close()
                 return res.status(501).send("err in MongoClient.connect is: ", err);
             }
-            const dbo = db.db("formcreator");
-            dbo.createCollection(`${name}`, function (err, res) {
+            const formcreatorDB = db.db("formcreator");
+            formcreatorDB.createCollection(`${name}`, function (err, res) {
                 if (err)
                     return res.status(502).send("err in dbo.createCollection is: ", err);
-                console.log("Collection created!");
                 db.close();
             });
         })
@@ -51,16 +85,13 @@ const createForm = async (req, res, next) => {
         //saving the configutarion to Configurations collection
         const didSave = await config.save()
         if (didSave) {
-            const myObj = {
+            const objSentToClient = {
                 msg: "new configuration for form created successfully",
                 link: link
             }
-            res.status(200).json(myObj)
+            res.status(200).json(objSentToClient)
         }
-        else{
-            const myObj = {
-                msg: "problem with saving the configuration"
-            }
+        else {
             return res.status(503).send("problem with saving the configuration")
         }
 
@@ -74,328 +105,200 @@ const createForm = async (req, res, next) => {
 }
 
 
-                if (myForms.length == 0) {
-                    console.log("empty")
-                    resolve(0)//in case non with these names were found
-                }
-                else if (myForms.length % 2 == 1) {
-                    console.log("uneven amount of files means something is probably missing")
-                    resolve(-1)//in case there is a missing file of UIschema or Schema in one of the forms
-                }
-                else {//need to check if there is a UIschema and Schema JSONs for each form
-                    console.log("everything's cool")
-                    const myObj = {//everything's good
-                        myForms: myForms,
-                        missingUI: missingUIschemaFileArr,
-                        missingSchema: missingSchemaFileArr
-                    }
-                    resolve(myObj)
-                }
+/**
+ * a function that retrieves the form CONFIGURATION  from the Configurations collection in the formcreator database 
+ * specified in the name gotten in req.query.name
+ * 
+ * IMPORTANT!!!: name of researchs/forms are CASE SENSITIVE!!!!
+ * 
+ * gets: 
+ * 
+ * -title: string, required. title of research/form (req.query.title), same one we got in req.body.name in createForm
+ * 
+ * returns:
+ * 
+ * upon SUCCESSFUL execution: status 200 and the schema and ui-schema that will create the form in the UI side in the <Form /> component
+ * 
+ * -schema&ui-schema: both are objects (same structure as the schema and ui-schema of createForm)
+ * 
+ * errors and their status codes: 
+ * 
+ * 500: title of research/form is missing/null
+ * 
+ * 501: could not find a configuration (document in the Configurations collection in the formcreator database in MongoDB) that
+ * matches the name stated
+ * 
+ * 502: general error
+ * 
+ */
 
-            } catch (err) {
-                res.status(404).send("a problem has occured with findFormsByName: " + err);
+const getForm = (req, res, next) => {
+
+
+    const title = req.query.title //title(/name) of the research
+
+    if (title == null)
+        return res.status(500).send("title is null")
+    try {
+        //check if the wanted form even exists
+        Config.findOne({ name: title.replace(/-/g, " ") }, (err, data) => {
+            if (err) {
+                console.log("error in getForms is: ", err)
+                return res.status(501).send("error in getForm in readdir is: ", err)
             }
+
+
+            let objSentToClient = {
+                schema: data.schema,
+                UI: data.ui,
+                nameOfCollection: title.replace(/-/g, " ")
+            }
+            //returning the form's data and configuration
+            return res.status(200).send(objSentToClient)
+
+
+
         })
+    } catch (error) {
+        if (error) {
+            console.log("error in getForms is: ", err)
+            res.status(502).send("error in getForms is: ", err)
+        }
     }
+}
 
-    //************************************************************ */
-    //SEARCH BY NAME!!!!!
-    return new Promise((resolve, reject) => {
-        console.log("i am in 2")
-        let myForms = []
-        let missingSchemaFileArr = []
-        let missingUIschemaFileArr = []
-        try {
-            fs.readdir(`${__dirname}`, (err, myFiles) => {
+
+/**
+ * a function that saves a participant's answers after they submitted them in the form they got from getForm. saves the 
+ * answers inside the collection name which corresponds to the name of the form/research they answered 
+ * 
+ * gets:
+ * 
+ * -name: string, required. inside the body of the req variable (=req.body) "name" specifies which collection 
+ * we are referring to, the name of the form/research is the name of the collection.
+ * 
+ * returns:
+ * 
+ * upon SUCCESSFUL execution: status 200 and a success message (a success alert prompts in the UI side as well)
+ * 
+ * error status codes and their meaning: 
+ * 
+ * 500: name of collection is null or missing.
+ * 
+ * 501: there was a problem in connecting to MongoDB or formcreator database via MongoClient
+ * 
+ * 502: there was a problem in creating a new document in the collection specificied.
+ * 
+ * 503: a general problem
+ * 
+ * 
+ */
+
+const saveAnswers = (req, res) => {
+
+    const nameOfCollection = req.body.name //name of collection (same as research name) with which we want to work
+
+    if (nameOfCollection == null) {
+        return res.status(500).send("name of collection is missing or null")
+    }
+    try {
+        const date = new Date()
+        const dateStr = `${date.getDate()}-${(date.getMonth()) + 1}-${date.getFullYear()},${date.getHours()}:${date.getMinutes()}`
+        const answersSavedInDB = {
+            answers: req.body.answers, //the answers themselves
+            date: dateStr //time and date
+        };
+
+        MongoClient.connect(url, function (err, db) {
+
+            if (err) {
+                console.log("error in MongoClient.connect in saveAnswers is: ", err)
+                db.close()
+                return res.status(501).send("error in MongoClient.connect in saveAnswers is: ", err)
+            }
+            const formcreatorDB = db.db("formcreator");
+            //saving answers to desired collection
+            formcreatorDB.collection(`${nameOfCollection}`).insertOne(answersSavedInDB, function (err, response) {
                 if (err) {
-                    console.log("problem with readdir in getAllForms in findFormsByNames: " + err)
-                    return -3//problem with readdir
+                    console.log("error in dbo.collection or in insertOne in saveAnswers is: ", err)
+                    db.close()
+                    return res.status(502).send("error in dbo.collection or in insertOne in saveAnswers is: ", err)
                 }
-                let stop = false; let startIndex = 0; let endIndex = 0;
-                while (!stop)//a loop to detemine where the form files start and where they end
-                {
-                    if (!(myFiles[startIndex].includes("formfile"))) {
-                        startIndex++
-                        endIndex++
-                    }
-                    else if (myFiles[endIndex].includes("formfile")) {
-                        endIndex++
-                    }
-                    else {
-                        stop = true
-                    }
+                db.close();
+            });
+        });
 
-
-                }
-                endIndex--
-                console.log(startIndex, endIndex)
-                for (let i = startIndex; i <= endIndex; i += 2)//a loop to run through all the files we got
-                {
-                    let tempArrSchema = myFiles[i].split(" ")//the file name splited to separated words
-                    let tempArrUI = myFiles[i + 1].split(" ")
-                    if ((tempArrSchema[tempArrSchema.length - 2] == tempArrUI[tempArrUI.length - 2]) && (tempArrSchema[tempArrSchema.length - 1] == "Schema.json") && (tempArrUI[tempArrUI.length - 1] == "UIschema.json")) {
-
-                        //working on one array because they are completely similar besides the UIschema.json/Schema.json
-
-                        tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove the words UIschema.json or Schema.json
-                        tempArrSchema.splice(tempArrSchema.length - 1, 1)//to remove project's name
-
-                        tempArrSchema = tempArrSchema.sort()//an alphabetically sorted string array. at this point the tempArr contains only the names of the researchers
-                        let j = 0;
-                        let flag = true//flag to show if all the names are in current tempArr file name
-                        console.log("tempArr inside is: " + tempArrSchema)
-                        for (; j < amountOFnames && flag == true; j++) {
-
-                            if (!(tempArrSchema.includes(namesArr[j]))) {
-                                flag = false
-                            }
-                        }
-                        if (flag)
-                            myForms.push(myFiles[i], myFiles[i + 1])
-                    }
-
-                    //TO ENABLE THE COMMENTS AFTER THIS LINE BECAUSE THEY CHECK IF THERE IS A FILE MISSING FOR A PROJECT!!!!!
-
-                    //#region Check if a file is missing
-
-                    /*else if(tempArrSchema[tempArrSchema.length - 2] != tempArrUI[tempArrUI.length - 2]){
-                        missingSchemaFileArr.push(myFiles[i])
-                        missingUIschemaFileArr.push(myFiles[i+1])
-                    }
-                    else if(tempArrSchema[tempArrSchema.length - 1] != "Schema.json"){//if one of the conditions didn't happen
-                        missingSchemaFileArr.push(myFiles[i]) //need to create a new Schema.json for that specific project name
-                    }
-                    else if(tempArrUI[tempArrUI.length - 1] == "UIschema.json")
-                    {
-                        missingUIschemaFileArr.push(myFiles[i+1]) //need to create a new UIschema for that specific project name
-                    }*/
-                    //#endregion
-
-                }
-
-                //console.log("myForms: ",myForms)
-
-                if (myForms.length == 0) {
-                    console.log("empty")
-                    resolve(0)//in case non with these names were found
-                }
-                else if (myForms.length % 2 == 1) {
-                    console.log("uneven amount of files means something is probably missing")
-                    resolve(-1)//in case there is a missing file of UIschema or Schema in one of the forms
-                }
-                else {//need to check if there is a UIschema and Schema JSONs for each form
-                    console.log("everything's cool")
-                    const myObj = {//everything's good
-                        myForms: myForms,
-                        missingUI: missingUIschemaFileArr,
-                        missingSchema: missingSchemaFileArr
-                    }
-                    resolve(myObj)
-                }
-            })
-        } catch (err) {
-            res.status(404).send("a problem has occured with findFormsByName: " + err);
-        }
-    })
-}
-
-
-const addForm = (req, res, next) => {
-    try {
-        const data = req.body
-        console.log("this is the body received: " + JSON.stringify(data))
-        //creating a JSON with the name requested
-        let UI_file = editJsonFile(`${__dirname}/formfile ${data.form_title} UIschema.json`);
-        let file = editJsonFile(`${__dirname}/formfile ${data.form_title} schema.json`);
-
-        const UI_schema_JSON = createUIschema(UI_file, data)//creates the UIschema
-        const schema_JSON = createSchema(file, data)//creates the schema
-
-        const two_JSONs = {
-            "schema": schema_JSON,
-            "UI": UI_schema_JSON
-        }
-        console.log(two_JSONs)
-        res.status(200).end(JSON.stringify(two_JSONs))
-    } catch (err) {
-        res.status(404).send("a problem has occured with addForm action:\n" + err);
+        return res.status(200).send("answers saved successfully")
+    }catch(err){
+        return res.status(503).send(err)
     }
 }
-//#region Add form
 
-//creates the UIschema
-const createUIschema = (UI_file, data) => {
+
+/**
+ * 
+ * a function call that retrieves ALL the results/answers of a specific form/research whose name is specified in req.query.name
+ * 
+ * gets:
+ * 
+ * -name: string, required. inside req.query.name you get the name of the research/form for which we need the results 
+ * of the participants
+ * 
+ * returns:
+ * 
+ * upon SUCCESSFUL execution: status 200 and ALL the results for the specified research/form
+ * 
+ * -results: object
+ * 
+ * contains the results and metadata (time and date)
+ * 
+ * error codes and their meaning:
+ * 
+ * 500: name of collection is missing or null
+ * 
+ * 501: there was a problem in connecting to MongoDB or formcreator database via MongoClient
+ * 
+ * 502: there was a problem finding the collection specified or retrieveing the results from it
+ * 
+ * 503: general problem
+ */
+
+const getAnswers = (req, res) => {
+    const nameOfCollection = req.query.name //name of collection (same as research name) with which we want to work
+
+    if(nameOfCollection==null)
+    {
+        return res.status(500).send("name of collection is missing or null")
+    }
     try {
-        UI_file.set("type", "Group")
-        let project_title = "Form by "
-        const contactArr = data.contactInfo
-        for (let i = 0; i < contactArr.length; i++)//loop to create the project's title with the name of the researchers
-        {
-            project_title += contactArr[i].name
-            if (contactArr.length > 1) {
-                if (i < contactArr.length - 2) {
-                    project_title += ", "
-                }
-                if (i == contactArr.length - 2) {
-                    project_title += " and "
-                }
+
+        MongoClient.connect(url, function (err, db) {
+            if (err) {
+                console.log("error in MongoClient.connect in getAnswers is: ", err)
+                db.close()
+                return res.status(501).send("error in MongoClient.connect in getAnswers is: ", err)
             }
-        }
-        UI_file.set("label", project_title)
-        UI_file.set("elements", [])
-        //going through the object received in the request (data) and setting the fields
-        const data_fields_values = data.dataFieldsValues
-        for (let i = 0; i < data_fields_values.length; i++) {
-            const inner_section = data_fields_values[i]
-            const tempJSON = {
-                "type": "Control",
-                "scope": "#/properties/" + inner_section.field_name,
-                //"label": inner_section.field_name
-            }
-            UI_file.append("elements", tempJSON)
-        }
-        //UI_file.save()
-        return UI_file.get()
+            const formcreatorDB = db.db("formcreator"); //connecting to database in the nme of formcreator- our database
+
+            //retrieving results from the desired collection
+            formcreatorDB.collection(`${nameOfCollection}`).find({}).toArray(function (err, results) {
+                if (err) {
+                    console.log("err in dbo.collectio.find in getAnswers is: ", err)
+                    return res.status(502).send("err in dbo.collectio.find in getAnswers is: ", err)
+                }
+                db.close();
+
+                return res.status(200).send(results)
+            });
+        });
     } catch (error) {
-        if (error)
-            console.error("problem in create UI schema:\n " + error)
+        if (error) {
+            console.log("error in getAnswers is: ", error)
+            return res.status(503).send("error in getAnswers is: ", error)
+        }
     }
 }
 
-//creates the regular (not UI) schema
-const createSchema = (file, data) => {
-    try {
-        file.set("type", "object")
-        file.set("properties", {})
-        const data_fields_values = data.dataFieldsValues
-        for (let i = 0; i < data_fields_values.length; i++) {
-            const inner_section = data_fields_values[i]
-            const temp_inner_JSON = checkForFields(inner_section)
-            const temp_key = "properties." + inner_section.field_name
-            file.set(temp_key, temp_inner_JSON)
-        }
-        //file.save()
-        return file.get()
-    } catch (error) {
-        if (error)
-            console.error("problem in createSchema:\n " + error)
-    }
-}
-
-//#region Field separtion logic
-const checkForFields = (inner_section) => {
-    try {
-        for (const field in inner_section) {
-            if (inner_section.field_type == "text")//checks if the current inner section represents a string type attribute
-            {
-                const inner_string_JSON = checkStringFields(inner_section)
-                return inner_string_JSON
-            }
-            else if (inner_section.field_type == "number")//checks if the current inner section represents a number type attribute
-            {
-                const inner_num_JSON = checkNumFields(inner_section)
-                return inner_num_JSON
-            }
-            else {//if not number or string-should be boolean
-                //const name = inner_section.field_name
-                const inner_bool_JSON = {
-                    "type": "boolean"
-                }
-                return inner_bool_JSON
-            }
-        }
-    } catch (error) {
-        if (error)
-            console.error("error in checkForFields:\n" + error)
-    }
-}
-
-//takes the inner_section fields and returns a json in case of string attribute
-const checkStringFields = (inner_section) => {
-    try {
-        const fieldsArr = []
-        if (inner_section.text_type == "Free-Text") {
-            fieldsArr.push('"description":"' + inner_section.field_name + '"')
-            if (inner_section.min_val != "") {
-                fieldsArr.push(',"minLength":' + inner_section.min_val)
-            }
-            if (inner_section.max_val != "") {
-                fieldsArr.push(',"maxLength":' + inner_section.max_val)
-            }
-        }
-        if (inner_section.text_type == "Date") {
-            fieldsArr.push('"format":"date"')
-        }
-        if (inner_section.text_type == "Choice Menu (Dropdown)") {
-            let values_for_dropdown_menu_array = []
-            for (let i = 0; i < inner_section.dropdown_fields_values.length; i++) {
-                values_for_dropdown_menu_array.push('"' + (inner_section.dropdown_fields_values[i]).value_name + '"')
-            }
-            fieldsArr.push('"enum":[' + values_for_dropdown_menu_array + "]")
-        }
-        fieldsArr.push("}")
-        let my_JSON = '{"type":"string",'//the string that will later become the JSON we send back
-
-        for (let i = 0; i < fieldsArr.length - 1; i++) {
-            if (fieldsArr[i] != null) {
-                my_JSON += fieldsArr[i]
-            }
-            if (fieldsArr[i + 1] != null && i != fieldsArr.length - 2) {
-                my_JSON += ","
-            }
-        }
-        my_JSON += "}"
-        //console.log("this is my json string: "+my_JSON)
-        my_JSON = JSON.parse(my_JSON)
-        return my_JSON
-    } catch (error) {
-        if (error)
-            console.error("problem with checkStringFields:\n" + error)
-    }
-}
-//checks the field in case of a number or integer attribute and returns a json
-const checkNumFields = (inner_section) => {
-    try {
-        const fieldsArr = []
-
-        /*if ("description" in inner_section) {
-            fieldsArr.push('"description":' + inner_section.description)
-        }*/
-        if (inner_section.max_val != "") {
-            fieldsArr.push('"maximum":' + inner_section.max_val)
-        }
-        if (inner_section.min_val != "") {
-            fieldsArr.push('"minimum":' + inner_section.min_val)
-        }
-        /*if ("default" in inner_section) {
-            fieldsArr.push('"default":' + inner_section.default)
-        }*/
-
-        fieldsArr.push("}")
-
-        let my_JSON = '{"type":"number",'//the string that will later become the JSON we send back
-
-        for (let i = 0; i < fieldsArr.length - 1; i++) {
-            if (fieldsArr[i] != null) {
-                my_JSON += fieldsArr[i]
-            }
-            if (fieldsArr[i + 1] != null && i != fieldsArr.length - 2) {
-                my_JSON += ","
-            }
-        }
-        my_JSON += "}"
-        my_JSON = JSON.parse(my_JSON)
-        return my_JSON
-    } catch (error) {
-        if (error)
-            console.error("error in checkNumFields: " + error)
-    }
-}
-
-//#endregion
-
-//#endregion
-module.exports = { addForm, getForms }
-
+module.exports = { createForm, getForm, saveAnswers, getAnswers }
 
 
