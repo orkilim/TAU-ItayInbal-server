@@ -3,7 +3,6 @@ require('dotenv').config();
 const url=process.env.DB_URL
 //options to configurate the connection to MongoDB va mongoose npm
 const options = {
-    //useCreateIndex: true, 
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };

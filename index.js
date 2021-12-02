@@ -1,4 +1,4 @@
-//setting port number as 3030
+//setting port number via .env file
 require("dotenv").config();
 const port=process.env.PORT
 
