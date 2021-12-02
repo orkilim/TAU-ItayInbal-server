@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-const {url}=require('./consts')
-
+const url=process.env.DB_URL
 //options to configurate the connection to MongoDB va mongoose npm
 const options = {
     //useCreateIndex: true, 
@@ -9,12 +8,9 @@ const options = {
     useUnifiedTopology: true,
 };
 
-mongoose.connect(url, options);
-const connection = mongoose.connection;
+mongoose.connect(url, options); //connecting to our formcreator database
+const connection = mongoose.connection; //creating a connection object
 connection.on('error', err => console.error('connection error: ', err)); //error handling
 connection.once('open', () => console.log('connected to: ', connection.name)) //connection handling
 
 
-/*if (process.env.NODE_ENV === 'test') {
-    mongoose.connection.close();
-  }*/

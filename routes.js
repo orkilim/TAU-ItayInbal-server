@@ -6,7 +6,7 @@ const controller = require('./controller');
 router.post('/create-form', controller.createForm);
 router.get('/get-form', controller.getForm);
 router.post('/save-results', controller.saveAnswers);
-
+router.get('/get-results', controller.getAnswers);
 
 
 module.exports = router;

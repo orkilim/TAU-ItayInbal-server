@@ -1,7 +1,11 @@
 const fs = require('fs');
 const Config = require('./models/configuration')
 const mongoose = require('mongoose');
-const { url, host, path } = require('./consts')
+require("dotenv").config();
+const url=process.env.DB_URL
+const host=process.env.HOST
+
+
 /**
  * connection to MongoDB through the MongoClient- done for specific action not available directly through 
  * the Mongoose npm, such as adding a new collection 
@@ -10,7 +14,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 
 /**
- * a function that saves configurations sent by the researcher in the DB:
+ * a function that saves configurations to a form created and sent by the researcher in the DB:
  * gets:
  * 
  * the function receives inside the body of "req" variable (req.body) the following:
@@ -108,6 +112,8 @@ const createForm = async (req, res, next) => {
 /**
  * a function that retrieves the form CONFIGURATION  from the Configurations collection in the formcreator database 
  * specified in the name gotten in req.query.name
+ * 
+ * uses query-STRING
  * 
  * IMPORTANT!!!: name of researchs/forms are CASE SENSITIVE!!!!
  * 
@@ -237,7 +243,10 @@ const saveAnswers = (req, res) => {
 
 /**
  * 
- * a function call that retrieves ALL the results/answers of a specific form/research whose name is specified in req.query.name
+ * a function call that retrieves ALL the results/answers of a specific form/research whose 
+ * name is specified in req.query.name
+ * 
+ * uses query-STRING 
  * 
  * gets:
  * 
