@@ -1,7 +1,5 @@
 const express = require('express');
 const app = express();
-//const port = process.env.PORT || 3030;
-//app.set('port', port);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 app.use(cors());
@@ -26,11 +24,15 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
     
-const controller = require("./routes");
+const router = require("./routes");
 
 //adding a router as a middleware
-app.use("/route", controller);
+app.use("/", router);
+
+const controller=require('./controller')
+
+app.get('/get-results', controller.getAnswers);
 
 app.use(bodyParser.json());
 
-module.exports={ app}
+module.exports={app}

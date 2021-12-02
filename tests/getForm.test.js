@@ -3,18 +3,21 @@ const supertest=require('supertest')
 const {app}=require('../server')
 const request = require('supertest');
 const mongoose=require('mongoose');
-const { schema } = require('../models/configuration');
+const {url,host}=require('../consts');
+const { response } = require('express');
 
 
 
 test("getting a json from the database", async ()=>{
-    const obj={
-        title:"exp 1",
-    }
-    const response= await request(app)
-      .post('/route/get-form')
-      .send(obj)
+    
+    await request(app)
+      .get('/route/get-form?title=my test 123')
       .set('Accept', 'application/json')
-    expect(response).toHaveProperty(schema)
+      .then((response)=>{
+        expect(response.body).toHaveProperty("schema")
+      })
+      
+      
+      
       
 })

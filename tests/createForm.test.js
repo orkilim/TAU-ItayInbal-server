@@ -4,8 +4,15 @@ const {app}=require('../server')
 const request = require('supertest');
 const mongoose=require('mongoose')
 
+afterAll(done => {
+    // THIS IS HOW YOU CLOSE CONNECTION IN MONGOOSE (mongodb ORM)
+    mongoose.connection.close();
+    done();
+  });
 
 test("successfully creating a form", async ()=>{
+    jest.setTimeout(15000)
+    
     const obj={
         name:"my test 123",
         schema:testJson
