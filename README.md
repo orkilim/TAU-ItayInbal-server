@@ -1,8 +1,31 @@
 # TAU-ItayInbal-server
 server side for formcreator system
 
+__IMPORTANT TIP: 
+
+each time you see '''$ command''' it means to type the command (without the $) in the terminal and press Enter key to execute it
+
+
 
 these are the instructions, settings and everything needed to use the formcreator system successfully.
+
+__STEPS:
+
+in order to use the Formcreator successfully the following steps need to be done:
+
+1. download and install Node.js, Git, and your prefered IDE (I used Visual Studio Code)
+2. create a new folder for the server-side
+3. open the terminal on the specified folder, there are two ways to do so: 
+
+a. open the cmd (or the OS command line) and navigate to the desired folder with '''$ cd path/to/folder''' 
+OR
+b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my case it would be "open with Visual Studio Code" and the symbol of the IDE near it,
+  press the Terminal tab on the top bar and press "New Terminal"
+  
+4. enter '''$ git init''' and follow the instructions
+5. use the following commands to clone and work with this Github repository:
+  
+  5.1 '''$ git clone 
 
 _____SETTING:_____
 package manager: npm
