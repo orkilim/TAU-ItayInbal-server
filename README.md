@@ -13,7 +13,7 @@ __STEPS:
 
 in order to use the Formcreator successfully the following steps need to be done:
 
-1. download and install Node.js, Git, and your prefered IDE (I used Visual Studio Code)
+1. download and install Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
 2. create a new folder for the server-side
 3. open the terminal on the specified folder, there are two ways to do so: 
 
@@ -25,7 +25,11 @@ b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my c
 4. enter '''$ git init''' and follow the instructions
 5. use the following commands to clone and work with this Github repository:
   
-  5.1 '''$ git clone 
+  5.1 '''$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git''' to clone(/download the repository to your local machine)
+  5.2 '''$ npm install''' to install all the used dependencies
+  5.3 '''$ git remote add origin https://github.com/orkilim/TAU-ItayInbal-server.git'''
+
+you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
 _____SETTING:_____
 package manager: npm
