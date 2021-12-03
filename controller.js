@@ -176,7 +176,8 @@ const getForm = (req, res, next) => {
 
 /**
  * a function that saves a participant's answers after they submitted them in the form they got from getForm. saves the 
- * answers inside the collection name which corresponds to the name of the form/research they answered 
+ * answers inside the collection name which corresponds to the name of the form/research they answered
+ * with the time and date they were answered at (the time and date=metadata. it is added automatically by the server) 
  * 
  * gets:
  * 
@@ -208,11 +209,12 @@ const saveAnswers = (req, res) => {
         return res.status(500).send("name of collection is missing or null")
     }
     try {
+        //adding time and date
         const date = new Date()
         const dateStr = `${date.getDate()}-${(date.getMonth()) + 1}-${date.getFullYear()},${date.getHours()}:${date.getMinutes()}`
         const answersSavedInDB = {
             answers: req.body.answers, //the answers themselves
-            date: dateStr //time and date
+            date: dateStr //time and date. format: day-month-year,hours:minutes
         };
 
         MongoClient.connect(url, function (err, db) {
