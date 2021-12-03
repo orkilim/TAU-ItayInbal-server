@@ -1,10 +1,11 @@
 # TAU-ItayInbal-server
 server side for formcreator system
 
-__IMPORTANT TIP: 
+__IMPORTANT TIPS: 
 
-each time you see ```$ command``` it means to type the command (without the $) in the terminal and press Enter key to execute it
+1. each time you see ```$ command``` it means to type the command (without the $) in the terminal and press Enter key to execute it
 
+2. __STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
 
 
 these are the instructions, settings and everything needed to use the formcreator system successfully.
@@ -31,6 +32,30 @@ b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my c
   5.2 ```$ npm install``` to install all the used dependencies ALREADY in the project
 
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
+
+__RUNNING THE SERVER:__
+ 
+ ALTHOUGH coming with the ```$ git clone``` done earlier in stage 5.1
+ 
+ check for the following line in the PACKAGE.JSON file, under "scripts"
+ 
+ "test": "jest --coverage --detectOpenHandles",
+ "dev": "nodemon index.js",
+ "start": "node server.js"
+ 
+ __usage:__
+ 
+ run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
+ 
+ for example when I use the commands it looks like so: C:\Users\Or\Desktop\TAU- work\Itay and Inbal's project\formcreator_server>npm run dev
+ 
+ commands:
+ 
+1. ```$ npm test``` - to run existing and to-be written tests
+ 
+2. ```$ npm run dev``` - to run/activate the server. use this command BEFORE using submitting http requests (be it through the UI/front-end/system interface OR Postman)
+
+__STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
 
 __saving changes in the code to this repository:
 
@@ -112,16 +137,10 @@ Details for Package.json:
     "jest": "^27.4.0",
     "mongoose": "^6.0.12",
     "supertest": "^6.1.6"
-  
-  _____SCRIPTS:_____ (to use: npm <one of the options below>)
     
-    "test": "jest --coverage --detectOpenHandles",
-    "dev": "nodemon index.js",
-    "start": "node server.js"
-  
-  EXTRA SETTINGS:
+    __EXTRA SETTINGS (for testing):__
     
-    AFTER dependencies:
+    AFTER dependencies in package.json file:
       
       "jest": {
     "testEnvironment": "node",
@@ -129,7 +148,6 @@ Details for Package.json:
       "/node_modules/"
     ]
   }
-
   
   __IMPORTANT:__
   
@@ -146,9 +164,10 @@ Details for Package.json:
   ...
   ```
   require('./dotenv').config()
-  const DB_URL=require(
+  const DB_URL=process.env.DB_URL
   ```
-  
+  ...
+  you now can use the DB_URL as a regular variable
   
   
   
