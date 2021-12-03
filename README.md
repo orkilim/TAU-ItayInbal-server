@@ -13,7 +13,9 @@ __STEPS:
 
 in order to use the Formcreator successfully the following steps need to be done:
 
-1. download and install Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
+__installation:
+
+1. download and install __FROM THE INTERNET__ Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
 2. create a new folder for the server-side
 3. open the terminal on the specified folder, there are two ways to do so: 
 
@@ -26,12 +28,67 @@ b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my c
 5. use the following commands to clone and work with this Github repository:
   
   5.1 ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git``` to clone(/download the repository to your local machine)
-  5.2 ```$ npm install``` to install all the used dependencies
-  5.3 ```$ git remote add origin https://github.com/orkilim/TAU-ItayInbal-server.git```
+  5.2 ```$ npm install``` to install all the used dependencies ALREADY in the project
 
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
-_____SETTING:_____
+__saving changes in the code to this repository:
+
+use the following commands to commit (=send changes) to the github repository (=save changes in github online repository):
+
+1. ```$ git add nameOfFile``` for a specific file OR ```git add .``` to add all files
+2. ```$ git commit -m "(your commit message goes here)"``` to commit changes to the repository (add message if you want where it says "(your commit message here)")
+3. ```$ git push``` to send the changes
+
+__using the server-side WITHOUT a front-end:
+
+I used Postman to send http requests to the server so i recommend using it (need to be downloaded and installed from the internet first)
+
+after that has been done you can use the following http methods and routes to use the server with Postman:
+
+__ROUTES:
+  
+  ALL the routes START with:
+  
+  http://(hostname)/(name of route)
+  
+  routes for __GET__ method
+  
+  ```http://(hostname)/get-form?title=(research name)```
+  
+  retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
+  
+  ```http://(hostname)/get-results?name=(name of research)```
+  
+  retrieves the wanted form's results
+  
+
+  routes for __POST__ method
+  
+  ```http://(hostname)/route/create-form```
+  
+  body of POST should contain:
+  -schema: schema object of form (required)
+  -ui: ui options for form (NOT required)
+  -name: name given to form (required)
+  
+  
+  this call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
+  
+  ```http://(hostname)/route/save-results```
+  
+  body of POST contain:
+  
+  -name: name of form (required)
+  -answers: the answers the person inputed (required)
+  
+  this call saves a the set of answers a specific user inputed to the specific collection (specified as "name" in the body of the call) in the database, the answer gets metadata of time and date added to it
+  
+ 
+
+__EXTRA STUFF TO KNOW:
+
+_____SETTINGS:_____
 package manager: npm
 server-side enviroment: Node.js 
 front-end library/framework: React.js 
@@ -42,11 +99,11 @@ Details for Package.json:
 
   _____PACKAGES INSTALLED:_____ (to install use: npm install)
   
-    dev-dependencies: (to be installed with: npm install <package name> --dev)
+    dev-dependencies: (to be installed with: npm install (package name) --dev)
     
     nodemon
      ------------
-    dependencies:
+    dependencies: (to be installed with npm install (package name)
     
     "cors": "^2.8.5", 
     "cross-env": "^7.0.3",(can be deleted)
@@ -74,52 +131,30 @@ Details for Package.json:
   }
 
   
-  _____IMPORTANT:_____
+  __IMPORTANT:__
   
   *a .env document is to be used to configure the connection url to the MongoDB via mongoose and MongoClient
   one was already created with a template of how it should look.
   
-  you will need to install the dotenv npm to use it and use the require('./dotenv') command for it to work
-  and then you can use process.env.<name of the variable for the url> to use it (in the template file the name of the variable is DB_URL)
+  you will need to download install the dotenv npm (ALREADY INSTALLED IN THIS REPOSITORY) to use it. 
   
-  _____ROUTES:_______
+  use the ```require('./dotenv').config()``` command inside the javascript files (preferably at the top of file) to have access to the .env file and its contents
+  and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
   
-  ALL the routes START with:
+  for example: 
   
-  http://<hostname>/route/<name of route>
-  
-  _____GET:_____
-  
-  http://<hostname>/route/get-form?title=<research name>
-  
-  retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
-  
-  http://<hostname>/route/get-results?name=<name of research>
-  
-  retrieves the wanted form's results
-  
-
-  _____POST:______
-  
-  http://<hostname>/route/create-form
-  
-  body of POST should contain:
-  -schema: schema object of form (required)
-  -ui: ui options for form (NOT required)
-  -name: name given to form (required)
+  ...
+  ```
+  require('./dotenv').config()
+  const DB_URL=require(
+  ```
   
   
-  this call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
   
-  http://<hostname>/route/save-results
   
-  body of POST contain:
   
-  -name: name of form (required)
-  -answers: the answers the person inputed (required)
   
-  this call saves a the set of answers a specific user inputed to the specific collection (specified as "name" in the body of the call) in the database, the answer gets metadata of time and date added to it
   
- 
+  
   
   
