@@ -3,7 +3,7 @@ server side for formcreator system
 
 __IMPORTANT TIP: 
 
-each time you see '''$ command''' it means to type the command (without the $) in the terminal and press Enter key to execute it
+each time you see ```$ command``` it means to type the command (without the $) in the terminal and press Enter key to execute it
 
 
 
@@ -17,17 +17,17 @@ in order to use the Formcreator successfully the following steps need to be done
 2. create a new folder for the server-side
 3. open the terminal on the specified folder, there are two ways to do so: 
 
-a. open the cmd (or the OS command line) and navigate to the desired folder with '''$ cd path/to/folder''' 
+a. open the cmd (or the OS command line) and navigate to the desired folder with ```$ cd path/to/folder``` 
 OR
 b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my case it would be "open with Visual Studio Code" and the symbol of the IDE near it,
   press the Terminal tab on the top bar and press "New Terminal"
   
-4. enter '''$ git init''' and follow the instructions
+4. enter ```$ git init``` and follow the instructions
 5. use the following commands to clone and work with this Github repository:
   
-  5.1 '''$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git''' to clone(/download the repository to your local machine)
-  5.2 '''$ npm install''' to install all the used dependencies
-  5.3 '''$ git remote add origin https://github.com/orkilim/TAU-ItayInbal-server.git'''
+  5.1 ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git``` to clone(/download the repository to your local machine)
+  5.2 ```$ npm install``` to install all the used dependencies
+  5.3 ```$ git remote add origin https://github.com/orkilim/TAU-ItayInbal-server.git```
 
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
