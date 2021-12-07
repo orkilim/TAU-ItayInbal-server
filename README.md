@@ -25,7 +25,7 @@ you have now downloaded the git repository to you local machine and downloaded a
 
 RUNNING THE SERVER:
  
- ALTHOUGH coming with the ```$ git clone``` done earlier in stage 5.1
+ ALTHOUGH coming with the ```$ git clone``` done earlier
  
  check for the following line in the PACKAGE.JSON file, under "scripts"
  
@@ -141,7 +141,7 @@ Details for Package.json:
   
   IMPORTANT:
   
-  use the ```require('./dotenv').config()``` command inside the javascript files (preferably at the top of file) to have access to the .env file and its contents
+  use the ```require('./dotenv').config()``` line inside any javascript file (preferably at the top of file) you want to have access to the .env file and its contents
   and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
   
   for example: 
@@ -157,7 +157,7 @@ Details for Package.json:
   
   
   
-  
+  ## link for FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
   
   
   
