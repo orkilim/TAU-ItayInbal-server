@@ -1,24 +1,21 @@
 # TAU-ItayInbal-server
 server side for formcreator system
 
-__IMPORTANT TIPS: 
-
-1. each time you see ```$ command``` it means to type the command (without the $) in the terminal and press Enter key to execute it
-
-2. __STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
-
-
 these are the instructions, settings and everything needed to use the formcreator system successfully.
 
-__STEPS:
+STEPS:
 
 in order to use the Formcreator successfully the following steps need to be done:
 
-__installation:
+Installation:
 
-1. download and install __FROM THE INTERNET__ Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
-2. create a new folder for the server-side
-3. open the terminal on the specified folder, there are two ways to do so: 
+1. download and install FROM THE INTERNET Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
+  
+  (the front-end is written with React.js)
+
+2. ```$ git clone ```
+3. create a new folder for the server-side (not have to be near the front-end folder but recommended
+4. open the terminal on the specified folder, there are two ways to do so: 
 
 a. open the cmd (or the OS command line) and navigate to the desired folder with ```$ cd path/to/folder``` 
 OR
