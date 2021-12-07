@@ -13,24 +13,17 @@ Installation:
   
   (the front-end is written with React.js)
 
-2. ```$ git clone ```
-3. create a new folder for the server-side (not have to be near the front-end folder but recommended
-4. open the terminal on the specified folder, there are two ways to do so: 
-
-a. open the cmd (or the OS command line) and navigate to the desired folder with ```$ cd path/to/folder``` 
-OR
-b.right-clicking on the folder and selecting "open with (prefered IDE)"- in my case it would be "open with Visual Studio Code" and the symbol of the IDE near it,
-  press the Terminal tab on the top bar and press "New Terminal"
-  
-4. enter ```$ git init``` and follow the instructions
-5. use the following commands to clone and work with this Github repository:
-  
-  5.1 ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git``` to clone(/download the repository to your local machine)
-  5.2 ```$ npm install``` to install all the used dependencies ALREADY in the project
-
+2. create a new folder for the server-side (not have to be near the front-end folder but recommended)
+3. ```$ cd (backend-code-folder)```
+4. ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
+5. ```$ cd (backend-code-folder-created-by-the-clone-command)```
+6. ```$ npm install``` to install all the used dependencies ALREADY in the project
+7. ```$ npm install --dev``` to install dev dependencies
+8. update .env file with relevant credentials and data
+9. ```$ npm start``` to start server
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
-__RUNNING THE SERVER:__
+RUNNING THE SERVER:
  
  ALTHOUGH coming with the ```$ git clone``` done earlier in stage 5.1
  
@@ -40,52 +33,48 @@ __RUNNING THE SERVER:__
  "dev": "nodemon index.js",
  "start": "node server.js"
  
- __usage:__
+ usage:
  
  run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
- 
- for example when I use the commands it looks like so: C:\Users\Or\Desktop\TAU- work\Itay and Inbal's project\formcreator_server>npm run dev
  
  commands:
  
 1. ```$ npm test``` - to run existing and to-be written tests
  
-2. ```$ npm run dev``` - to run/activate the server. use this command BEFORE using submitting http requests (be it through the UI/front-end/system interface OR Postman)
+2. ```$ npm start``` - to run/activate the server. use this command BEFORE using submitting http requests (be it through the UI/front-end/system interface OR Postman)
 
-__STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
+3. ```$npm run dev```- to run server using nodemon (so you won't have to restart it every change)
 
-__saving changes in the code to this repository:
+STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux
 
-use the following commands to commit (=send changes) to the github repository (=save changes in github online repository):
 
-1. ```$ git add nameOfFile``` for a specific file OR ```git add .``` to add all files
-2. ```$ git commit -m "(your commit message goes here)"``` to commit changes to the repository (add message if you want where it says "(your commit message here)")
-3. ```$ git push``` to send the changes
+using the server-side WITHOUT a front-end:
 
-__using the server-side WITHOUT a front-end:
+the server is accessible with HTTP requests
 
 I used Postman to send http requests to the server so i recommend using it (need to be downloaded and installed from the internet first)
-
 after that has been done you can use the following http methods and routes to use the server with Postman:
 
-__ROUTES:
-  
-  ALL the routes START with:
-  
-  http://(hostname)/(name of route)
-  
-  routes for __GET__ method
+ROUTES:
+    
+   to be written in the URL or Postman
+    
+  routes for GET method:
   
   ```http://(hostname)/get-form?title=(research name)```
   
   retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
+  
+  
+  
   
   ```http://(hostname)/get-results?name=(name of research)```
   
   retrieves the wanted form's results
   
 
-  routes for __POST__ method
+
+  routes for POST method:
   
   ```http://(hostname)/route/create-form```
   
@@ -96,6 +85,10 @@ __ROUTES:
   
   
   this call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
+  
+  
+  
+  
   
   ```http://(hostname)/route/save-results```
   
@@ -108,9 +101,9 @@ __ROUTES:
   
  
 
-__EXTRA STUFF TO KNOW:
+EXTRA STUFF TO KNOW:
 
-_____SETTINGS:_____
+SETTINGS:
 package manager: npm
 server-side enviroment: Node.js 
 front-end library/framework: React.js 
@@ -119,7 +112,7 @@ previous developer: Or Kilim, for questions and inqueries contact me on orkilim@
 Details for Package.json:
 
 
-  _____PACKAGES INSTALLED:_____ (to install use: npm install)
+  PACKAGES INSTALLED: (to install use: npm install)
   
     dev-dependencies: (to be installed with: npm install (package name) --dev)
     
@@ -135,7 +128,7 @@ Details for Package.json:
     "mongoose": "^6.0.12",
     "supertest": "^6.1.6"
     
-    __EXTRA SETTINGS (for testing):__
+    EXTRA SETTINGS (for testing):
     
     AFTER dependencies in package.json file:
       
@@ -146,12 +139,7 @@ Details for Package.json:
     ]
   }
   
-  __IMPORTANT:__
-  
-  *a .env document is to be used to configure the connection url to the MongoDB via mongoose and MongoClient
-  one was already created with a template of how it should look.
-  
-  you will need to download install the dotenv npm (ALREADY INSTALLED IN THIS REPOSITORY) to use it. 
+  IMPORTANT:
   
   use the ```require('./dotenv').config()``` command inside the javascript files (preferably at the top of file) to have access to the .env file and its contents
   and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
