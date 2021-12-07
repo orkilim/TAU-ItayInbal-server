@@ -3,11 +3,11 @@ server side for formcreator system
 
 these are the instructions, settings and everything needed to use the formcreator system successfully.
 
-STEPS:
+__STEPS:__
 
 in order to use the Formcreator successfully the following steps need to be done:
 
-Installation:
+__Installation:__
 
 1. download and install FROM THE INTERNET Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
   
@@ -23,7 +23,7 @@ Installation:
 9. ```$ npm start``` to start server
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
-RUNNING THE SERVER:
+__RUNNING THE SERVER:__
  
  ALTHOUGH coming with the ```$ git clone``` done earlier
  
@@ -45,21 +45,34 @@ RUNNING THE SERVER:
 
 3. ```$npm run dev```- to run server using nodemon (so you won't have to restart it every change)
 
-STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux
+__STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
 
 
-using the server-side WITHOUT a front-end:
+
+
+__using the server-side WITHOUT a front-end:__
 
 the server is accessible with HTTP requests
 
 I used Postman to send http requests to the server so i recommend using it (need to be downloaded and installed from the internet first)
 after that has been done you can use the following http methods and routes to use the server with Postman:
 
-ROUTES:
+
+We designed the UI and the server to work with each other, the following routes in the UI call the following routes in in the server:
+
+https://(hostname)/formcreator  --->  http://(hostname)/create-form
+
+https://(hostname)/forms/:(form-id) ---> 1. http://(hostname)/get-form?title=(research name)
+                                         2. http://(hostname)/save-results
+                                         
+https://(hostname)/results  --->    http://(hostname)/get-results?name=(name of research)
+
+
+__ROUTES:__
     
    to be written in the URL or Postman
     
-  routes for GET method:
+  routes for __GET__ method:
   
   ```http://(hostname)/get-form?title=(research name)```
   
@@ -74,9 +87,9 @@ ROUTES:
   
 
 
-  routes for POST method:
+  routes for __POST__ method:
   
-  ```http://(hostname)/route/create-form```
+  ```http://(hostname)/create-form```
   
   body of POST should contain:
   -schema: schema object of form (required)
@@ -90,7 +103,7 @@ ROUTES:
   
   
   
-  ```http://(hostname)/route/save-results```
+  ```http://(hostname)/save-results```
   
   body of POST contain:
   
@@ -101,7 +114,7 @@ ROUTES:
   
  
 
-EXTRA STUFF TO KNOW:
+__EXTRA STUFF TO KNOW:__
 
 SETTINGS:
 package manager: npm
@@ -109,10 +122,10 @@ server-side enviroment: Node.js
 front-end library/framework: React.js 
 previous developer: Or Kilim, for questions and inqueries contact me on orkilim@gmail.com
 
-Details for Package.json:
+__Details for Package.json:__
 
 
-  PACKAGES INSTALLED: (to install use: npm install)
+  __PACKAGES INSTALLED: (to install use: npm install)__
   
     dev-dependencies: (to be installed with: npm install (package name) --dev)
     
@@ -139,7 +152,7 @@ Details for Package.json:
     ]
   }
   
-  IMPORTANT:
+  __IMPORTANT:__
   
   use the ```require('./dotenv').config()``` line inside any javascript file (preferably at the top of file) you want to have access to the .env file and its contents
   and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
