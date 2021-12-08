@@ -38,7 +38,7 @@ __RUNNING THE SERVER:__
  
  the following lines should be in the package.json after the ```$ git clone```
  
- make sure they exist under "scripts". if not- add them
+ but make sure they exist under "scripts". if not- add them
  
  "test": "jest --coverage --detectOpenHandles"|
  "dev": "nodemon index.js" |
