@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --coverage --detectOpenHandles",
     "dev": "nodemon index.js",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "author": "Or Kilim",
   "license": "ISC",
