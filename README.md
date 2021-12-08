@@ -10,13 +10,19 @@ in order to use the Formcreator successfully the following steps need to be done
 __Installation:__
 
 1. download and install FROM THE INTERNET Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
+
+NODE.JS- https://nodejs.org/en/download/
+
+Git- https://git-scm.com/downloads
+
+
   
   (the front-end is written with React.js)
 
-2. create a new folder for the server-side (not have to be near the front-end folder but recommended)
+2. create a new folder for the server-side (the folder needs to be a separate one from the front-end folder)
 3. ```$ cd (backend-code-folder)```
 4. ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
-5. ```$ cd (backend-code-folder-created-by-the-clone-command)```
+5. ```$ cd TAU-ItayInbal-server```
 6. ```$ npm install``` to install all the used dependencies ALREADY in the project
 7. ```$ npm install --dev``` to install dev dependencies
 8. update .env file with relevant credentials and data
@@ -33,11 +39,11 @@ __RUNNING THE SERVER:__
  "dev": "nodemon index.js",
  "start": "node server.js"
  
- usage:
+ __USAGE:__
  
  run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
  
- commands:
+ COMMANDS:
  
 1. ```$ npm test``` - to run existing and to-be written tests
  
@@ -114,7 +120,7 @@ __ROUTES:__
   
  
 
-__EXTRA STUFF TO KNOW:__
+__EXTRA STUFF TO KNOW (NOT related to the installation or usage)__
 
 SETTINGS:
 package manager: npm
