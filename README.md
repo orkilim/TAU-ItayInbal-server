@@ -26,11 +26,11 @@ Git- https://git-scm.com/downloads
 4. ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
 
   __in development__
-4. ```$ git clone --branch dev https://github.com/orkilim/TAU-ItayInbal-server.git```
-5. ```$ cd TAU-ItayInbal-server```
-6. ```$ npm install``` to install all the used dependencies ALREADY in the project
-7. ```$ npm install --dev``` to install dev dependencies
-8. update .env file with relevant credentials and data
+4. ```$ git clone --branch dev https://github.com/orkilim/TAU-ItayInbal-server.git``` |
+5. ```$ cd TAU-ItayInbal-server``` |
+6. ```$ npm install``` to install all the used dependencies ALREADY in the project |
+7. ```$ npm install --dev``` to install dev dependencies |
+8. update .env file with relevant credentials and data |
 9. ```$ npm start``` to start server
 you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
 
