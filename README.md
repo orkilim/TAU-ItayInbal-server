@@ -128,9 +128,9 @@ __ROUTES:__
 __EXTRA STUFF TO KNOW (NOT related to the installation or usage)__
 
 SETTINGS:
-package manager: npm
-server-side enviroment: Node.js 
-front-end library/framework: React.js 
+package manager: npm |
+server-side enviroment: Node.js |
+front-end library/framework: React.js |
 previous developer: Or Kilim, for questions and inqueries contact me on orkilim@gmail.com
 
 __Details for Package.json:__
@@ -168,6 +168,7 @@ __Details for Package.json:__
   use the ```require('./dotenv').config()``` line inside any javascript file (preferably at the top of file) you want to have access to the .env file and its contents
   and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
   
+  
   for example: 
   
   ...
@@ -178,6 +179,11 @@ __Details for Package.json:__
   ...
   you now can use the DB_URL as a regular variable
   
+  __inside .env__:
+  
+  PORT- defines the port which the server listens to |
+  HOST- name of the FRONT-END host for when we create the link |
+  DB_URL- the connection url from the server-side to the mongoDB form creator database
   
   
   
