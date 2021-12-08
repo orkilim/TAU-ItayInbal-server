@@ -52,7 +52,7 @@ __RUNNING THE SERVER:__
  
 1. ```$ npm test``` - to run existing and to-be written tests
  
-2. ```$ npm start``` - to run/activate the server. use this command BEFORE using submitting http requests (be it through the UI/front-end/system interface OR Postman)
+2. ```$ npm start``` - to run/activate the server. use this command BEFORE starting the front-end (and beforesending requests in Postman)
 
 3. ```$npm run dev```- to run server using nodemon (so you won't have to restart it every change)
 
