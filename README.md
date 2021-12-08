@@ -21,7 +21,12 @@ Git- https://git-scm.com/downloads
 
 2. create a new folder for the server-side (the folder needs to be a separate one from the front-end folder)
 3. ```$ cd (backend-code-folder)```
+
+  __in production__
 4. ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
+
+  __in development__
+4. 4. ```$ git clone --branch dev https://github.com/orkilim/TAU-ItayInbal-server.git```
 5. ```$ cd TAU-ItayInbal-server```
 6. ```$ npm install``` to install all the used dependencies ALREADY in the project
 7. ```$ npm install --dev``` to install dev dependencies
