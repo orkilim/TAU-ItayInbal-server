@@ -36,12 +36,12 @@ you have now downloaded the git repository to you local machine and downloaded a
 
 __RUNNING THE SERVER:__
  
- ALTHOUGH coming with the ```$ git clone``` done earlier
+ the following lines should be in the package.json after the ```$ git clone```
  
- check for the following line in the PACKAGE.JSON file, under "scripts"
+ make sure they exist under "scripts". if not- add them
  
- "test": "jest --coverage --detectOpenHandles",
- "dev": "nodemon index.js",
+ "test": "jest --coverage --detectOpenHandles"|
+ "dev": "nodemon index.js" |
  "start": "node server.js"
  
  __USAGE:__
