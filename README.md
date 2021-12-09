@@ -52,7 +52,7 @@ __inside .env__:
   go to Database Access (in the side menu) and there you can create or edit users<br/>
 
 7. ``` npm start``` to start server <br/>
-8. (add health check)
+8. use http GET request: ```http://localhost:3030/test``` to check server 
 
  
  We designed the UI and the server to work with each other, the following routes in the UI call the following routes in in the server:
