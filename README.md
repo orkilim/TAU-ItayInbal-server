@@ -46,7 +46,7 @@ __inside .env__:
   to get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
   then go to "connect"-->"connect your application"-->choose driver "Node.js" and version "4.0 or later"--> you will get the connection url<br/>
 
-  in the link you'll have to enter 3 parameters: ```<user>```, ```<pass>``` and ```<myfirstdatabase>```<br/>
+  in the link you'll have to enter 3 parameters: ```<user>```, ```<pass>``` and ```<nameOfDatabase>```<br/>
   
   to create/update the user and the password:<br/>
   go to Database Access (in the side menu) and there you can create or edit users<br/>
