@@ -1,6 +1,10 @@
 # TAU-ItayInbal-server
 server side for formcreator system
 
+__the front-end is written with React.js__
+
+## link to FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
+
 these are the instructions, settings and everything needed to use the formcreator system successfully.
 
 __STEPS:__
@@ -9,63 +13,47 @@ in order to use the Formcreator successfully the following steps need to be done
 
 __Installation:__
 
-1. download and install FROM THE INTERNET Node.js (and NPM with it), Git, and your prefered IDE (I used Visual Studio Code)
+1. download and install Node.js (and NPM with it)
 
 NODE.JS- https://nodejs.org/en/download/
 
-Git- https://git-scm.com/downloads
-
-
+(we used NODE.js v14.18.1)
   
-  (the front-end is written with React.js)
+2. ``` git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
+3. ``` cd TAU-ItayInbal-server``` <br/>
+4. ``` npm install``` to install all the used dependencies in the project <br/>
+<br/>
+these are the added NPMs:
+"cors": "^2.8.5",<br/>
+    "cross-env": "^7.0.3",<br/>
+    "dotenv": "^10.0.0",<br/>
+    "edit-json-file": "^1.6.0",<br/>
+    "express": "^4.17.1",<br/>
+    "jest": "^27.4.0",<br/>
+    "mongoose": "^6.0.12",<br/>
+    "nodemon": "^2.0.15",<br/>
+    "supertest": "^6.1.6"<br/>
+<br/>
+5. ``` npm install --dev``` to install dev dependencies <br/>
+6. update .env file with relevant credentials and data <br/>
 
-2. create a new folder for the server-side (the folder needs to be a separate one from the front-end folder)
-3. ```$ cd (backend-code-folder)```
-4. ```$ git clone https://github.com/orkilim/TAU-ItayInbal-server.git```
-5. ```$ cd TAU-ItayInbal-server```
-6. ```$ npm install``` to install all the used dependencies ALREADY in the project
-7. ```$ npm install --dev``` to install dev dependencies
-8. update .env file with relevant credentials and data
-9. ```$ npm start``` to start server
-you have now downloaded the git repository to you local machine and downloaded and installed all the required dependancies(/libraries)
+__inside .env__:
+  
+  PORT- defines the port which the server listens to <br/>
+  UI-HOST- name of the FRONT-END host for when we create the link <br/>
+  DB_URL- the connection url from the server-side to the mongoDB form creator database
+  
+  to get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
+  then go to "connect"-->"connect your application"-->choose driver "Node.js" and version "4.0 or later"--> you will get the connection url
 
-__RUNNING THE SERVER:__
+7. ``` npm start``` to start server <br/>
+8. (add health check)
+
  
- ALTHOUGH coming with the ```$ git clone``` done earlier
- 
- check for the following line in the PACKAGE.JSON file, under "scripts"
- 
- "test": "jest --coverage --detectOpenHandles",
- "dev": "nodemon index.js",
- "start": "node server.js"
- 
- __USAGE:__
- 
- run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
- 
- COMMANDS:
- 
-1. ```$ npm test``` - to run existing and to-be written tests
- 
-2. ```$ npm start``` - to run/activate the server. use this command BEFORE using submitting http requests (be it through the UI/front-end/system interface OR Postman)
-
-3. ```$npm run dev```- to run server using nodemon (so you won't have to restart it every change)
-
-__STOP THE RUNNING COMMAND WITH Ctrl+C on Windows or Linux__
-
-
-
-
-__using the server-side WITHOUT a front-end:__
-
-the server is accessible with HTTP requests
-
-I used Postman to send http requests to the server so i recommend using it (need to be downloaded and installed from the internet first)
-after that has been done you can use the following http methods and routes to use the server with Postman:
-
-
-We designed the UI and the server to work with each other, the following routes in the UI call the following routes in in the server:
+ We designed the UI and the server to work with each other, the following routes in the UI call the following routes in in the server:
 ```
+UI/Front-End                           Server/Back-End                          
+
 https://(hostname)/formcreator  --->  http://(hostname)/create-form
 
 https://(hostname)/forms/:(form-id) ---> 1. http://(hostname)/get-form?title=(research name)
@@ -73,6 +61,23 @@ https://(hostname)/forms/:(form-id) ---> 1. http://(hostname)/get-form?title=(re
                                          
 https://(hostname)/results  --->    http://(hostname)/get-results?name=(name of research)
 ```
+
+ 
+ 
+ 
+ __SERVER USAGE:__
+ 
+ run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
+ 
+ COMMANDS:
+ 
+1. ``` npm test``` - to run existing and to-be written tests
+ 
+2. ``` npm start``` - to run/activate the server. use this command BEFORE starting the front-end (and beforesending requests in Postman)
+
+3. ```npm run dev```- to run server using nodemon (so you won't have to restart it every change)
+
+
 
 __ROUTES:__
     
@@ -84,14 +89,14 @@ __ROUTES:__
   
   retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
   
-  
-  
+  <br/>
+  <br/>
   
   ```http://(hostname)/get-results?name=(name of research)```
   
   retrieves the wanted form's results
-  
-
+  <br/>
+<br/>
 
   routes for __POST__ method:
   
@@ -106,8 +111,8 @@ __ROUTES:__
   this call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
   
   
-  
-  
+  <br/>
+  <br/>
   
   ```http://(hostname)/save-results```
   
@@ -120,34 +125,7 @@ __ROUTES:__
   
  
 
-__EXTRA STUFF TO KNOW (NOT related to the installation or usage)__
-
-SETTINGS:
-package manager: npm
-server-side enviroment: Node.js 
-front-end library/framework: React.js 
-previous developer: Or Kilim, for questions and inqueries contact me on orkilim@gmail.com
-
-__Details for Package.json:__
-
-
-  __PACKAGES INSTALLED: (to install use: npm install)__
-  
-    dev-dependencies: (to be installed with: npm install (package name) --dev)
-    
-    nodemon
-     ------------
-    dependencies: (to be installed with npm install (package name)
-    
-    "cors": "^2.8.5", 
-    "cross-env": "^7.0.3",(can be deleted)
-    "dotenv": "^10.0.0",
-    "edit-json-file": "^1.6.0", (can be deleted)
-    "jest": "^27.4.0",
-    "mongoose": "^6.0.12",
-    "supertest": "^6.1.6"
-    
-    EXTRA SETTINGS (for testing):
+    TESTING SETTINGS (for testing):
     
     AFTER dependencies in package.json file:
       
@@ -158,26 +136,5 @@ __Details for Package.json:__
     ]
   }
   
-  __IMPORTANT:__
   
-  use the ```require('./dotenv').config()``` line inside any javascript file (preferably at the top of file) you want to have access to the .env file and its contents
-  and then you can use process.env.(name of the variable for the url) to use it (in the template file the name of the variable is DB_URL)
-  
-  for example: 
-  
-  ...
-  ```
-  require('./dotenv').config()
-  const DB_URL=process.env.DB_URL
-  ```
-  ...
-  you now can use the DB_URL as a regular variable
-  
-  
-  
-  
-  ## link for FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
-  
-  
-  
-  
+ 
