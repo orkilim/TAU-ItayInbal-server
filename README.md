@@ -23,8 +23,8 @@ NODE.JS- https://nodejs.org/en/download/
 3. ``` cd TAU-ItayInbal-server``` <br/>
 4. ``` npm install``` to install all the used dependencies in the project <br/>
 <br/>
-these are the added NPMs:
-"cors": "^2.8.5",<br/>
+these are the added NPMs:<br/>
+    "cors": "^2.8.5",<br/>
     "cross-env": "^7.0.3",<br/>
     "dotenv": "^10.0.0",<br/>
     "edit-json-file": "^1.6.0",<br/>
@@ -35,7 +35,7 @@ these are the added NPMs:
     "supertest": "^6.1.6"<br/>
 <br/>
 5. ``` npm install --dev``` to install dev dependencies <br/>
-6. update .env file with relevant credentials and data <br/>
+6. update .env file, found inside the TAU-ItayInbal-server folder with relevant credentials and data <br/>
 
 __inside .env__:
   
@@ -44,7 +44,12 @@ __inside .env__:
   DB_URL- the connection url from the server-side to the mongoDB form creator database
   
   to get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
-  then go to "connect"-->"connect your application"-->choose driver "Node.js" and version "4.0 or later"--> you will get the connection url
+  then go to "connect"-->"connect your application"-->choose driver "Node.js" and version "4.0 or later"--> you will get the connection url<br/>
+
+  in the link you'll have to enter 3 parameters: ```<user>```, ```<pass>``` and ```<myfirstdatabase>```<br/>
+  
+  to create/update the user and the password:<br/>
+  go to Database Access (in the side menu) and there you can create or edit users<br/>
 
 7. ``` npm start``` to start server <br/>
 8. (add health check)
