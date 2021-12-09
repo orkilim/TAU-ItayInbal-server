@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Config = require('./models/configuration')
 const mongoose = require('mongoose');
-require("dotenv").config();
+require("dotenv").config();//required to access the .env contents
 const url=process.env.DB_URL
 const host=process.env.HOST
 
@@ -310,6 +310,10 @@ const getAnswers = (req, res) => {
     }
 }
 
-module.exports = { createForm, getForm, saveAnswers, getAnswers }
+const test=(req,res)=>{
+    res.status(200).send("server is up and running")
+}
+
+module.exports = { createForm, getForm, saveAnswers, getAnswers,test }
 
 
