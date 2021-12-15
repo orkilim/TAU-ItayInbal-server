@@ -39,7 +39,7 @@ these are the added NPMs:<br/>
 
 __inside .env__:
   
-  PORT- defines the port which the server listens to <br/>
+  PORT- defines the port which the back-end server listens to <br/>
   UI-HOST- name of the FRONT-END host for when we create the link <br/>
   DB_URL- the connection url from the server-side to the mongoDB form creator database
   
