@@ -3,7 +3,7 @@ const Config = require('./models/configuration')
 const mongoose = require('mongoose');
 require("dotenv").config();//required to access the .env contents
 const url=process.env.DB_URL
-const host=process.env.HOST
+const uihost="localhost:3000"
 
 
 /**
@@ -63,7 +63,7 @@ const createForm = async (req, res, next) => {
 
     try {
 
-        const link = `http://${host}/forms/${nameForLink}`
+        const link = `http://${uihost}/forms/${nameForLink}`
 
         //creating a configuration for form to go to Configurations collection in MongoDB
         const config = new Config({ name, schema, ui, link })
