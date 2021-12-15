@@ -40,7 +40,6 @@ these are the added NPMs:<br/>
 __inside .env__:
   
   PORT- defines the port which the back-end server listens to <br/>
-  UI-HOST- name of the FRONT-END host for when we create the link <br/>
   DB_URL- the connection url from the server-side to the mongoDB form creator database
   
   to get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
@@ -67,7 +66,11 @@ https://(hostname)/forms/:(form-id) ---> 1. http://(hostname)/get-form?title=(re
 https://(hostname)/results  --->    http://(hostname)/get-results?name=(name of research)
 ```
 
+ __TO CHANGE THE UI-HOST IP:__
  
+ since we only use it in one place in one line, the ui host address is declared as a VARIABLE in __controller.js__ as ```const uihost="(your address here)"```<br/>
+ 
+ change as you wish through there
  
  
  __SERVER USAGE:__
