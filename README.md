@@ -93,22 +93,24 @@ __ROUTES:__
     
   routes for __GET__ method:
   
-  ```http://(hostname)/get-form?title=(research name)```
+  1. ```http://(hostname)/get-form?title=(research name)```
   
   retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
   
   <br/>
   <br/>
   
-  ```http://(hostname)/get-results?name=(name of research)```
+  2. ```http://(hostname)/get-results?name=(name of research)```
   
   retrieves the wanted form's results
   <br/>
-<br/>
+
+3. ```http://(hostname)/get-forms-names```
+    retrieves the name of all the collections in the formcreator database
 
   routes for __POST__ method:
   
-  ```http://(hostname)/create-form```
+  1. ```http://(hostname)/create-form```
   
   body of POST should contain:
   -schema: schema object of form (required)
@@ -122,7 +124,7 @@ __ROUTES:__
   <br/>
   <br/>
   
-  ```http://(hostname)/save-results```
+  2. ```http://(hostname)/save-results```
   
   body of POST contain:
   
