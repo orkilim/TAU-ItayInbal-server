@@ -210,11 +210,16 @@ const saveAnswers = (req, res) => {
     }
     try {
         //adding time and date
-        const date = new Date()
-        const dateStr = `${date.getDate()}-${(date.getMonth()) + 1}-${date.getFullYear()},${date.getHours()}:${date.getMinutes()}`
+        const dateObj = new Date()
+        const date = `${dateObj.getDate()}-${(dateObjobj.getMonth()) + 1}-${dateObj.getFullYear()}`
+        const time=`${dateObj.getHours()}:${dateObj.getMinutes()}`
         const answersSavedInDB = {
-            answers: req.body.answers, //the answers themselves
-            date: dateStr //time and date. format: day-month-year,hours:minutes
+            data: req.body.answers, //the answers themselves
+            metadata: {
+                date:date,
+                time:time
+            } /**time and date. format: date: day-month-year,
+                *time: hours:minutes*/
         };
 
         MongoClient.connect(url, function (err, db) {
@@ -298,8 +303,10 @@ const getAnswers = (req, res) => {
                     return res.status(502).send("err in dbo.collectio.find in getAnswers is: ", err)
                 }
                 db.close();
-
-                return res.status(200).send(results)
+                const resultsJSON={
+                    results:results
+                }
+                return res.status(200).send(resultsJSON)
             });
         });
     } catch (error) {
@@ -309,11 +316,55 @@ const getAnswers = (req, res) => {
         }
     }
 }
+/**
+ * a function to get all the names of collections from the formcreator database
+ * 
+ * gets: nothing
+ * 
+ * returns: inside the "info" object. there will be the names of all the collections of the database
+ * 
+ * upon SUCCESSFUL execution: status 200 and the names of all the collections in the database
+ * 
+ * other status codes and their meanings: 
+ * 
+ * 501: problem with connection
+ * 
+ * 502: problem with retrieving all the collections
+ * 
+ * 503: general problem
+ */
+const getNames=(req,res)=>{
+    try {
+        MongoClient.connect(url,(err,db)=>{
+            if(err)
+            {
+                console.log("problem with connection: ",err)
+                db.close()
+                return res.status(501).send("problem with connection: ",err)
+            }
+            const formcreatorDB=db.db("formcreator")
+
+            formcreatorDB.listCollections().toArray((err,info)=>{
+                if(err)
+                {
+                    console.log("problem in listCollections: ",err)
+                    db.close()
+                    return res.status(502).send("problem in listCollections: ",err)
+                }
+                db.close()
+                return res.status(200).send(info)
+            })
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(503).send("general problem in getNames: ",error)
+    }
+}
 
 const test=(req,res)=>{
     res.status(200).send("server is up and running")
 }
 
-module.exports = { createForm, getForm, saveAnswers, getAnswers,test }
+module.exports = { createForm, getForm, saveAnswers, getAnswers,test,getNames }
 
 
