@@ -211,7 +211,7 @@ const saveAnswers = (req, res) => {
     try {
         //adding time and date
         const dateObj = new Date()
-        const date = `${dateObj.getDate()}-${(dateObjobj.getMonth()) + 1}-${dateObj.getFullYear()}`
+        const date = `${dateObj.getDate()}-${(dateObj.getMonth()) + 1}-${dateObj.getFullYear()}`
         const time=`${dateObj.getHours()}:${dateObj.getMinutes()}`
         const answersSavedInDB = {
             data: req.body.answers, //the answers themselves
@@ -243,6 +243,7 @@ const saveAnswers = (req, res) => {
 
         return res.status(200).send("answers saved successfully")
     }catch(err){
+        console.log(err)
         return res.status(503).send(err)
     }
 }
