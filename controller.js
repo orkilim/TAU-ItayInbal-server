@@ -3,7 +3,6 @@ const Config = require('./models/configuration')
 const mongoose = require('mongoose');
 require("dotenv").config();//required to access the .env contents
 const url=process.env.DB_URL
-const uihost="localhost:3000"
 
 
 /**
@@ -50,7 +49,7 @@ const MongoClient = require('mongodb').MongoClient;
  */
 const createForm = async (req, res, next) => {
 
-
+    const uihost=req.body.uihost
     const schema = req.body.schema
     const ui = req.body.ui
     const name = req.body.name
@@ -307,6 +306,7 @@ const getAnswers = (req, res) => {
                 const resultsJSON={
                     results:results
                 }
+                
                 return res.status(200).send(resultsJSON)
             });
         });
