@@ -1,6 +1,8 @@
 # TAU-ItayInbal-server
 server side for formcreator system
 
+the system runs on Red Hat Linux
+
 __the front-end is written with React.js__
 
 ## link to FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
