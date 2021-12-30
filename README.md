@@ -1,21 +1,21 @@
 # TAU-ItayInbal-server
-server side for formcreator system
+Server side for formcreator system
 
-the system runs on Red Hat Linux
+The system runs on Red Hat Linux
 
-__the front-end is written with React.js__
+__The front-end is written with React.js__
 
-## link to FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
+## Link to FRONT-END repository: https://github.com/orkilim/TAU-ItayInbal
 
-these are the instructions, settings and everything needed to use the formcreator system successfully.
+These are the instructions, settings and everything needed to use the formcreator system successfully.
 
 __STEPS:__
 
-in order to use the Formcreator successfully the following steps need to be done:
+In order to use the Formcreator successfully the following steps need to be done:
 
 __Installation:__
 
-1. download and install Node.js (and NPM with it)
+1. Download and install Node.js (and NPM with it)
 
 NODE.JS- https://nodejs.org/en/download/
 
@@ -25,22 +25,22 @@ NODE.JS- https://nodejs.org/en/download/
 3. ``` cd TAU-ItayInbal-server``` <br/>
 4. ``` npm install``` to install all the used dependencies in the project <br/>
 <br/>
-packages can be found at package.json
+Packages can be found at package.json
 <br/>
 5. ``` npm install --dev``` to install dev dependencies <br/>
-6. update .env file, found inside the TAU-ItayInbal-server folder with relevant credentials and data <br/>
+6. Update .env file, found inside the TAU-ItayInbal-server folder with relevant credentials and data <br/>
 
-__inside .env__:
+__Inside .env__:
   
   PORT- defines the port which the back-end server listens to <br/>
   DB_URL- the connection url from the server-side to the mongoDB form creator database
   
-  to get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
+  To get the connection url (DB_URL), enter the MongoDB platform with the formcreator account
   then go to "connect"-->"connect your application"-->choose driver "Node.js" and version "4.0 or later"--> you will get the connection url<br/>
 
-  in the link you'll have to enter 3 parameters: ```<user>```, ```<pass>``` and ```<nameOfDatabase>```<br/>
+  In the link you'll have to enter 3 parameters: ```<user>```, ```<pass>``` and ```<nameOfDatabase>```<br/>
   
-  to create/update the user and the password:<br/>
+  To create/update the user and the password:<br/>
   go to Database Access (in the side menu) and there you can create or edit users<br/>
 
 7. ``` npm start``` to start server <br/>
@@ -60,14 +60,14 @@ https://(hostname)/results  --->    http://(hostname)/get-results?name=(name of 
 
  __TO CHANGE THE UI-HOST IP:__
  
- since we only use it in one place in one line, the ui host address is declared as a VARIABLE in __controller.js__ as ```const uihost="(your address here)"```<br/>
+ Since we only use it in one place in one line, the ui host address is declared as a VARIABLE in __controller.js__ as ```const uihost="(your address here)"```<br/>
  
  change as you wish through there
  
  
  __SERVER USAGE:__
  
- run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
+ Run the following commands in the terminal of the IDE (or the OS's command line after navigating to the proper folder)
  
  COMMANDS:
  
@@ -81,36 +81,36 @@ https://(hostname)/results  --->    http://(hostname)/get-results?name=(name of 
 
 __ROUTES:__
     
-   to be written in the URL or Postman
+   To be written in the URL or Postman
     
-  routes for __GET__ method:
+  Routes for __GET__ method:
   
   1. ```http://(hostname)/get-form?title=(research name)```
   
-  retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
+  Retrieves the wanted form given in the "title" query-string attribute (query-STRING, NOT query params)
   
   <br/>
   <br/>
   
   2. ```http://(hostname)/get-results?name=(name of research)```
   
-  retrieves the wanted form's results
+  Retrieves the wanted form's results
   <br/>
 
 3. ```http://(hostname)/get-forms-names```
     retrieves the name of all the collections in the formcreator database
 
-  routes for __POST__ method:
+  Routes for __POST__ method:
   
   1. ```http://(hostname)/create-form```
   
-  body of POST should contain:
+  Body of POST should contain:
   -schema: schema object of form (required)
   -ui: ui options for form (NOT required)
   -name: name given to form (required)
   
   
-  this call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
+  This call creates a form and saves it to the database, it returns a link to the form which can be sent to people and they will get a real copy of the form which saves the answers inserted
   
   
   <br/>
@@ -118,12 +118,12 @@ __ROUTES:__
   
   2. ```http://(hostname)/save-results```
   
-  body of POST contain:
+  Body of POST contain:
   
   -name: name of form (required)
   -answers: the answers the person inputed (required)
   
-  this call saves a the set of answers a specific user inputed to the specific collection (specified as "name" in the body of the call) in the database, the answer gets metadata of time and date added to it
+  This call saves a the set of answers a specific user inputed to the specific collection (specified as "name" in the body of the call) in the database, the answer gets metadata of time and date added to it
   
  
 
