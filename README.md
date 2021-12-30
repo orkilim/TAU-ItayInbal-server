@@ -25,16 +25,7 @@ NODE.JS- https://nodejs.org/en/download/
 3. ``` cd TAU-ItayInbal-server``` <br/>
 4. ``` npm install``` to install all the used dependencies in the project <br/>
 <br/>
-these are the added NPMs:<br/>
-    "cors": "^2.8.5",<br/>
-    "cross-env": "^7.0.3",<br/>
-    "dotenv": "^10.0.0",<br/>
-    "edit-json-file": "^1.6.0",<br/>
-    "express": "^4.17.1",<br/>
-    "jest": "^27.4.0",<br/>
-    "mongoose": "^6.0.12",<br/>
-    "nodemon": "^2.0.15",<br/>
-    "supertest": "^6.1.6"<br/>
+packages can be found at package.json
 <br/>
 5. ``` npm install --dev``` to install dev dependencies <br/>
 6. update .env file, found inside the TAU-ItayInbal-server folder with relevant credentials and data <br/>
@@ -53,14 +44,13 @@ __inside .env__:
   go to Database Access (in the side menu) and there you can create or edit users<br/>
 
 7. ``` npm start``` to start server <br/>
-8. use http GET request: ```http://localhost:3030/test``` to check server 
 
  
  We designed the UI and the server to work with each other, the following routes in the UI call the following routes in in the server:
 ```
 UI/Front-End                           Server/Back-End                          
 
-https://(hostname)/formcreator  --->  http://(hostname)/create-form
+https://(hostname)/create-form  --->  http://(hostname)/create-form
 
 https://(hostname)/forms/:(form-id) ---> 1. http://(hostname)/get-form?title=(research name)
                                          2. http://(hostname)/save-results
